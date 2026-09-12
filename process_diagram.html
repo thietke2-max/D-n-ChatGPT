@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
+  body { background: #0B0F19; color: #F8FAFC; padding: 40px 30px; width: 1600px; min-height: 900px; }
+  
+  .header { text-align: center; margin-bottom: 35px; border-bottom: 2px solid #1E293B; padding-bottom: 20px; }
+  .header .badge { display: inline-block; background: rgba(245, 166, 35, 0.15); color: #F5A623; border: 1px solid #F5A623; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; }
+  .header h1 { font-size: 32px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.5px; }
+  .header h1 span { color: #38BDF8; }
+  .header p { color: #94A3B8; font-size: 15px; margin-top: 8px; }
+
+  /* Google Flow Top Context Bar */
+  .flow-topbar { background: #1E293B; border-radius: 12px; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border: 1px solid #334155; }
+  .flow-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; color: #F5A623; font-size: 16px; }
+  .flow-brand .logo-circle { width: 32px; height: 32px; background: #00529B; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; }
+  .flow-nav { display: flex; gap: 20px; font-size: 14px; color: #94A3B8; }
+  .flow-nav span.active { color: #38BDF8; font-weight: 600; border-bottom: 2px solid #38BDF8; padding-bottom: 4px; }
+  .flow-actions { display: flex; gap: 12px; }
+  .btn-run { background: linear-gradient(135deg, #00529B, #0284C7); color: white; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35); }
+
+  /* Main Workflow Grid */
+  .workflow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; position: relative; }
+  
+  /* Connector Arrows */
+  .connector { position: absolute; top: 180px; z-index: 10; display: flex; align-items: center; justify-content: center; }
+  .conn-1 { left: calc(25% - 15px); }
+  .conn-2 { left: calc(50% - 15px); }
+  .conn-3 { left: calc(75% - 15px); }
+  .arrow-badge { width: 32px; height: 32px; background: #0284C7; border: 2px solid #38BDF8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
+
+  /* Node Card */
+  .node-card { background: #131B2E; border: 1.5px solid #1E293B; border-radius: 16px; padding: 22px; position: relative; transition: all 0.3s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+  .node-card.active-stage { border-color: #0284C7; box-shadow: 0 0 25px rgba(2, 132, 199, 0.25); }
+  .node-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid #1E293B; }
+  .node-title-group { display: flex; align-items: center; gap: 10px; }
+  .node-num { width: 28px; height: 28px; border-radius: 8px; background: #00529B; color: white; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .node-title { font-size: 15px; font-weight: 700; color: #FFFFFF; }
+  .node-tag { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
+  .tag-blue { background: rgba(56, 189, 248, 0.15); color: #38BDF8; }
+  .tag-gold { background: rgba(245, 166, 35, 0.15); color: #F5A623; }
+  .tag-purple { background: rgba(168, 85, 247, 0.15); color: #C084FC; }
+  .tag-green { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+
+  /* Inner Modules */
+  .sub-module { background: #1A233A; border: 1px solid #283553; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .sub-title { font-size: 12px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .sub-content { font-size: 12.5px; color: #E2E8F0; line-height: 1.5; }
+
+  /* Slots Container */
+  .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+  .slot-item { background: #0F1626; border: 1px dashed #3B82F6; border-radius: 8px; padding: 8px 4px; text-align: center; }
+  .slot-name { font-size: 10.5px; font-weight: 600; color: #93C5FD; }
+  .slot-desc { font-size: 9.5px; color: #64748B; margin-top: 2px; }
+
+  /* Scene Stack Items */
+  .scene-card { background: #0F1626; border-left: 3px solid #F5A623; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 11.5px; }
+  .scene-name { font-weight: 600; color: #FDE047; }
+  .scene-prompt { font-size: 10.5px; color: #94A3B8; margin-top: 2px; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Check list items */
+  .check-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #CBD5E1; margin-bottom: 6px; }
+  .check-icon { width: 16px; height: 16px; border-radius: 50%; background: #059669; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; }
+
+  /* Export Grid */
+  .export-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+  .export-box { background: #0F1626; border: 1px solid #059669; border-radius: 6px; padding: 8px 4px; text-align: center; }
+  .export-ratio { font-size: 11px; font-weight: 700; color: #34D399; }
+  .export-size { font-size: 9px; color: #64748B; margin-top: 2px; }
+
+  /* PSD Layer Tree */
+  .psd-layers { background: #0F1626; border-radius: 6px; padding: 8px 10px; margin-top: 6px; font-size: 11px; }
+  .psd-layer { display: flex; align-items: center; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #1E293B; }
+  .psd-layer:last-child { border-bottom: none; }
+  .layer-tag { font-size: 9.5px; background: #1E293B; color: #94A3B8; padding: 1px 6px; border-radius: 4px; }
+
+  /* Bottom Thinking Summary */
+  .thinking-bar { margin-top: 30px; background: #131B2E; border: 1px solid #1E293B; border-radius: 12px; padding: 18px 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .think-step { border-left: 2px solid #38BDF8; padding-left: 14px; }
+  .think-title { font-size: 13px; font-weight: 700; color: #38BDF8; margin-bottom: 4px; }
+  .think-desc { font-size: 11.5px; color: #94A3B8; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">Google Flow &bull; Architecture Thinking Diagram v4.0</div>
+  <h1>BẢN VẼ QUY TRÌNH &amp; LUỒNG TƯ DUY <span>WINTOP AI STUDIO</span></h1>
+  <p>Mô hình trực quan hóa 4 chặng: Ingestion &rarr; Script-to-Prompt Stack &rarr; Synthesis &amp; Safe Zone &rarr; Multi-Format PSD Export</p>
+</div>
+
+<!-- Google Flow Context Topbar -->
+<div class="flow-topbar">
+  <div class="flow-brand">
+    <div class="logo-circle">W</div>
+    <span>WINTOP AI &bull; GOOGLE FLOW CANVAS PIPELINE</span>
+  </div>
+  <div class="flow-nav">
+    <span class="active">Thư viện Node</span>
+    <span>Nhân vật (Characters)</span>
+    <span>Phân cảnh (Scenes)</span>
+    <span>Công cụ (Tools)</span>
+    <span>Nhật ký Render</span>
+  </div>
+  <div class="flow-actions">
+    <button class="btn-run">&#9654; CHẠY TOÀN BỘ PIPELINE</button>
+  </div>
+</div>
+
+<!-- 4-Stage Workflow Grid -->
+<div class="workflow-grid">
+  
+  <!-- Connector Arrows -->
+  <div class="connector conn-1"><div class="arrow-badge">&rarr;</div></div>
+  <div class="connector conn-2"><div class="arrow-badge">&rarr;</div></div>
+  <div class="connector conn-3"><div class="arrow-badge">&rarr;</div></div>
+
+  <!-- NODE 1: INPUT & ASSETS -->
+  <div class="node-card active-stage">
+    <div class="node-header">
+      <div class="node-title-group">
+        <div class="node-num">1</div>
+        <div class="node-title">NHẬP LIỆU &amp; TÀI NGUYÊN</div>
+      </div>
+      <span class="node-tag tag-blue">Input Node</span>
+    </div>
+    
+    <div class="sub-module">
+      <div class="sub-title">&#9998; Ý Tưởng Sáng Tạo</div>
+      <div class="sub-content">Mẹ công nhân tăng ca phòng trọ nhìn con ở quê ôm sữa Wintop đón Trung thu.</div>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128196; Kịch Bản Đầu Vào</div>
+      <div class="sub-content">Kich_ban_Trung_Thu_Wintop_V3.xlsx<br/><span style="color:#64748B; font-size:11px;">10 phân cảnh bối cảnh xóm trọ & quê nhà</span></div>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128206; 3 Slot Tài Nguyên Cố Định</div>
+      <div class="slots-grid">
+        <div class="slot-item">
+          <div class="slot-name">Nhân vật</div>
+          <div class="slot-desc">Mẹ &amp; Bé Lan</div>
+        </div>
+        <div class="slot-item">
+          <div class="slot-name">Sản phẩm</div>
+          <div class="slot-desc">Lon 400g/800g</div>
+        </div>
+        <div class="slot-item">
+          <div class="slot-name">Mascot</div>
+          <div class="slot-desc">Hươu Siêu Nhân</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px; color:#38BDF8; margin-top:8px; text-align:right;">Output: &bull; Script_Stream &bull; Asset_Bundle</div>
+  </div>
+
+  <!-- NODE 2: SCRIPT STACK -->
+  <div class="node-card active-stage">
+    <div class="node-header">
+      <div class="node-title-group">
+        <div class="node-num">2</div>
+        <div class="node-title">BÓC TÁCH PHÂN CẢNH</div>
+      </div>
+      <span class="node-tag tag-gold">Gemini Stack</span>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#9881; Trí Tuệ Gemini Pro</div>
+      <div class="sub-content">Phân tích cốt truyện, bóc tách diễn biến tâm lý &amp; sinh Prompt điện ảnh chuẩn.</div>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128220; Danh Sách Phân Cảnh (Scene Cards)</div>
+      
+      <div class="scene-card">
+        <div class="scene-name">Scene 1: Phòng trọ đêm muộn</div>
+        <div class="scene-prompt">A tired Vietnamese mother sitting in a dim room...</div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-name">Scene 2: Bà ở quê pha sữa Wintop</div>
+        <div class="scene-prompt">Grandmother tenderly making warm Wintop milk...</div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-name">Scene 3: Bé vui đón trăng cùng Mascot</div>
+        <div class="scene-prompt">Cute 5yo girl smiling with glowing lantern &amp; Mascot...</div>
+      </div>
+    </div>
+
+    <div style="font-size:11px; color:#F5A623; margin-top:8px; text-align:right;">Output: &bull; Scenes_Array &bull; Cinematic_Prompts</div>
+  </div>
+
+  <!-- NODE 3: SYNTHESIS & AUDIT -->
+  <div class="node-card active-stage">
+    <div class="node-header">
+      <div class="node-title-group">
+        <div class="node-num">3</div>
+        <div class="node-title">TỔNG HỢP &amp; KIỂM DUYỆT</div>
+      </div>
+      <span class="node-tag tag-purple">Synthesis Node</span>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128248; Imagen 3 + Consistency</div>
+      <div class="check-item"><div class="check-icon">&#10003;</div>Khóa Face ID Mẹ &amp; Bé (&ge; 98% giống mẫu)</div>
+      <div class="check-item"><div class="check-icon">&#10003;</div>Chuẩn hệ màu thương hiệu Wintop</div>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128737; Safe Zone &amp; Auto Inpainting</div>
+      <div class="check-item"><div class="check-icon">&#10003;</div>Tự động dò Safe Zone 1/3 (Không che mặt)</div>
+      <div class="check-item"><div class="check-icon">&#10003;</div>Hòa khớp ánh sáng viền (Rim Light)</div>
+      <div class="check-item"><div class="check-icon">&#10003;</div>Tạo bóng tiếp xúc tự nhiên (Contact Shadow)</div>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128269; AI Quality Audit Engine</div>
+      <div style="display:flex; justify-content:space-between; font-size:11.5px;">
+        <span style="color:#34D399;">&#9679; Ngón tay: 0 lỗi</span>
+        <span style="color:#34D399;">&#9679; Mắt: 0 lỗi</span>
+        <span style="color:#34D399;">&#9679; Logo: Chuẩn 100%</span>
+      </div>
+    </div>
+    <div style="font-size:11px; color:#C084FC; margin-top:8px; text-align:right;">Output: &bull; Audited_Renders_Stream</div>
+  </div>
+
+  <!-- NODE 4: MULTI-FORMAT EXPORT -->
+  <div class="node-card active-stage">
+    <div class="node-header">
+      <div class="node-title-group">
+        <div class="node-num">4</div>
+        <div class="node-title">XUẤT BẢN ĐA ĐỊNH DẠNG</div>
+      </div>
+      <span class="node-tag tag-green">Export Node</span>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128396; AI Upscaler Siêu Nét</div>
+      <div class="sub-content">Real-ESRGAN x4plus &bull; 4K (3840x2160) &amp; 8K Ultra-HD<br/><span style="color:#34D399; font-size:11px;">Chi tiết sắc viền, không vỡ hạt</span></div>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128241; Xuất Đồng Thời 3 Tỉ Lệ Chuẩn Ads</div>
+      <div class="export-grid">
+        <div class="export-box">
+          <div class="export-ratio">1:1</div>
+          <div class="export-size">1080x1080</div>
+          <div style="font-size:8.5px; color:#94A3B8;">FB Feed</div>
+        </div>
+        <div class="export-box">
+          <div class="export-ratio">9:16</div>
+          <div class="export-size">1080x1920</div>
+          <div style="font-size:8.5px; color:#94A3B8;">Reels/TikTok</div>
+        </div>
+        <div class="export-box">
+          <div class="export-ratio">16:9</div>
+          <div class="export-size">1920x1080</div>
+          <div style="font-size:8.5px; color:#94A3B8;">Youtube Display</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-module">
+      <div class="sub-title">&#128193; Tự Động Tách 4 Layer PSD (SAM)</div>
+      <div class="psd-layers">
+        <div class="psd-layer"><span>Layer 1: Text &amp; Badges</span><span class="layer-tag">Top</span></div>
+        <div class="psd-layer"><span>Layer 2: Lon Sữa &amp; Mascot</span><span class="layer-tag">Asset</span></div>
+        <div class="psd-layer"><span>Layer 3: Nhân vật Mẹ &amp; Bé</span><span class="layer-tag">Subject</span></div>
+        <div class="psd-layer"><span>Layer 4: Phông nền hoàn thiện</span><span class="layer-tag">BG</span></div>
+      </div>
+    </div>
+    <div style="font-size:11px; color:#34D399; margin-top:8px; text-align:right;">Output: &bull; 4K Pack &bull; PSD Master File</div>
+  </div>
+
+</div>
+
+<!-- Bottom Thinking Summary -->
+<div class="thinking-bar">
+  <div class="think-step">
+    <div class="think-title">Tư Duy Chặng 1</div>
+    <div class="think-desc">Xác lập bối cảnh thông điệp và khóa cứng các tài nguyên nhận diện không thể thay đổi (Character Face, Packshot Lon Sữa, Mascot).</div>
+  </div>
+  <div class="think-step">
+    <div class="think-title">Tư Duy Chặng 2</div>
+    <div class="think-desc">Bẻ nhỏ câu chuyện xúc cảm thành chuỗi phân cảnh điện ảnh liên hoàn; chuẩn hóa prompt tiếng Anh có định hướng vị trí asset.</div>
+  </div>
+  <div class="think-step">
+    <div class="think-title">Tư Duy Chặng 3</div>
+    <div class="think-desc">Hòa hợp mỹ thuật: Khóa mặt nhân vật, tự động đặt lon sữa vào 1/3 khung hình và hòa khớp bóng đổ, quét sạch lỗi dị tật AI.</div>
+  </div>
+  <div class="think-step">
+    <div class="think-title">Tư Duy Chặng 4</div>
+    <div class="think-desc">Đóng gói chuẩn công nghiệp: Phục vụ ngay lập tức cho Media Buyer (ảnh 4K đa tỷ lệ) và Graphic Designer (file PSD phân 4 layer độc lập).</div>
+  </div>
+</div>
+
+</body>
+</html>

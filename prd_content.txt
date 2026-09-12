@@ -1,0 +1,100 @@
+﻿BẢN MÔ TẢ YÊU CẦU SẢN PHẨM (SOFTWARE PRD)
+TOOL TỰ ĐỘNG TẠO ẢNH WINTOP AI (GOOGLE FLOW PLATFORM)
+Tên hệ thống: Wintop AI Image Generator Tool
+Nền tảng tích hợp: Google Flow / Google Cloud Vertex AI & Imagen Ecosystem
+Thương hiệu áp dụng: Sữa dinh dưỡng Wintop (Colostrum Gain & Wintop Baby)
+Phiên bản: 3.0 (Cập nhật theo Sketch UI Workflow) | Ngày cập nhật: 12/09/2026
+Người lập: Trợ lý Chuyên gia Lập PRD System Architecture
+1. TỔNG QUAN SẢN PHẨM & MỤC TIÊU HỆ THỐNG
+1.1. Tầm nhìn & Mục tiêu (Product Vision & Goals)
+Tool Tự Động Tạo Ảnh Wintop AI là công cụ sản xuất hình ảnh truyền thông và quảng cáo đa nền tảng tự động hóa trên nền tảng Google Flow. Hệ thống cho phép người dùng nhập dữ liệu từ Khối Input (ý tưởng, nguyên liệu, dữ liệu mẫu), tự động bóc tách thành các ô phân cảnh xếp chồng, đưa qua phễu "Tổng hợp" (Inpainting, Kiểm lỗi, Consistency) và chuyển sang bước "Xuất bản" multi-format.
+Mục tiêu năng suất: Giảm 85% thời gian tạo Key Visual và phân cảnh quảng cáo (từ 4 tiếng/ảnh xuống dưới 30 giây/ảnh).
+Mục tiêu chuẩn hóa: Đảm bảo 100% hình ảnh sinh ra tuân thủ nhận diện thương hiệu Wintop, vị trí Safe Zone, tính nhất quán nhân vật và chất lượng render 4K/8K.
+Mục tiêu kỹ thuật: Chuẩn hóa đúng mô hình sơ đồ UI từ Trái sang Phải trên Google Flow Engine.
+1.2. Người dùng mục tiêu (User Personas)
+Creative Director / Content Marketer: Nhập ý tưởng/nguyên liệu, chọn concept và duyệt nhanh chuỗi phân cảnh.
+Designer / Media Buyer: Tải các file PSD/PNG tách lớp (Background, Asset, Mascot) ở bước Xuất bản để tùy biến hoặc sử dụng trực tiếp cho Ads Campaign (Facebook, TikTok, Zalo).
+2. KIẾN TRÚC SƠ ĐỒ VẬN HÀNH (WORKFLOW ARCHITECTURE ACCORDING TO SKETCH)
+Hệ thống vận hành theo đúng sơ đồ phác thảo tay gồm Top Bar (Home, About, Account) và luồng 4 khối từ trái sang phải:
++-----------------------------------------------------------------------------------------------------------------+| Home       About                                                                                       (Account)|+-----------------------------------------------------------------------------------------------------------------+|                                           GOOGLE FLOW PIPELINE ENGINE                                           |+----------------------+       +-------------------------+       +-------------------+       +--------------------+|  KHỐI 1: INPUT       |       |  KHỐI 2: SCRIPT ENGINE  |       | KHỐI 3: TỔNG HỢP  |       | KHỐI 4: XUẤT BẢN   ||                      |       |                         |       | (SYNTHESIS/AUDIT) |       | (MULTI-FORMAT EXPORT)||  +----------------+  |       |   +-----------------+   |       |                   |       |                    ||  |    Ý TƯỞNG     |  |       |   | Phân cảnh 1     |   |       |                   |       | • AI Upscaler 4K/8K||  +----------------+  |  ==>  |   +-----------------+   |  ==\  | • Auto-Inpainting |  -->  | • Auto-Layer PSD   ||  |  NGUYÊN LIỆU   |  |  (1)  |   | Phân cảnh 2     |   |  (2) >| • Consistency     |  (3)  | • Multi-Ratio      ||  +----------------+  |       |   +-----------------+   |  ==/  | • Safe Zone Audit |       |   (1:1, 9:16, 16:9)||  |  DỮ LIỆU MẪU   |  |       |   | Phân cảnh N...  |   |       |                   |       |                    ||  +----------------+  |       |   +-----------------+   |       |                   |       |                    |+----------------------+       +-------------------------+       +-------------------+       +--------------------+
+3. YÊU CẦU CHỨC NĂNG CHI TIẾT (FUNCTIONAL SPECIFICATIONS)
+3.1. KHỐI 1: INPUT (NHẬP LIỆU ĐẦU VÀO)
+Sơ đồ mô tả Khối Input gồm 3 mục tương tác chính từ trên xuống dưới:
+F1.1: Ô Ý Tưởng (Idea / Prompt Text Input)
+Chức năng: Ô text cho phép người dùng gõ câu lệnh ý tưởng vắt tắt bằng tiếng Việt hoặc tiếng Anh.
+Tích hợp AI: Tự động hoàn thiện thuật ngữ ngành sữa (Sữa non Mỹ, HMO, Chiết xuất tổ yến, Mascot Hươu siêu nhân, Đèn ông sao...).
+F1.2: Mục Nguyên Liệu (Script & Content Source Selector)
+Dropdown Chọn Loại Nguyên Liệu:
+Kịch bản Content Social
+Kịch bản Video TVC / Reels
+Ý tưởng Khai thác Insight khách hàng
+Prompt Mẫu chuẩn
+Tệp Nguyên Liệu / Văn bản thô: Ô tải file (.docx, .pdf, .xlsx, .txt) hoặc dán trực tiếp văn bản kịch bản chi tiết.
+F1.3: Khối Dữ Liệu Mẫu (Asset Reference Dropzone)
+Khối khung kéo-thả tài nguyên tham chiếu cố định 3 Slot:
+Slot Character (Gương mặt / Nhân vật): Ảnh chân dung/toàn thân nhân vật mẩu (Mẹ công nhân, Bé gái).
+Slot Product (Sản phẩm Wintop): File PNG trong suốt của Lon Wintop Colostrum Gain 400g/800g hoặc Vỉ sữa pha sẵn 110ml/180ml.
+Slot Mascot (Linh vật): File PNG Mascot Hươu cao cổ siêu nhân chuẩn nhận diện Wintop.
+3.2. KHỐI 2: BÓC TÁCH PHÂN CẢNH (SCRIPT-TO-PROMPT ENGINE)
+Khi nhấn mũi tên chuyển tiếp ==>, hệ thống Gemini Pro Node tự động phân tích Khối Input và xếp chồng các ô Phân cảnh (Scene Stack):
+Xếp chồng danh sách Phân cảnh (Scenes Stack):
+Phân cảnh 1: Trích xuất bối cảnh, nhân vật, cảm xúc và sinh Prompt tiếng Anh chuẩn điện ảnh.
+Phân cảnh 2: Tự động duy trì liên kết từ Phân cảnh 1.
+Phân cảnh 3 ... N: Tiếp tục phân bóc toàn bộ kịch bản.
+Cấu trúc Prompt chuẩn sinh ra cho mỗi phân cảnh:[Subject & Action] + [Environment & Mood] + [Brand Asset Integration] + [Camera Angle & Lighting] + [Style & Quality Modifiers]
+3.3. KHỐI 3: KHỐI TỔNG HỢP (SYNTHESIS & AUDIT ENGINE)
+Toàn bộ các ô Phân cảnh ở Khối 2 sẽ được thu gom qua phễu hội tụ > vào Khối Tổng hợp:
+F3.1: Auto Inpainting & Asset Compositing
+Tự động tính toán vùng trống (Safe Zone 1/3) để chèn Packshot Lon/Vỉ sữa Wintop và Mascot Hươu siêu nhân mà không che đè nhân vật.
+Khớp nguồn sáng hắt (Rim Light), bóng đổ (Shadow) và màu sắc giữa Asset với môi trường.
+F3.2: Đồng Nhất Cross-Scene (Consistency Engine)
+Tự động khóa và duy trì Face ID nhân vật, trang phục, cùng hệ màu thương hiệu Wintop (Xanh dương #00529B, Vàng kim #F5A623) trên tất cả các phân cảnh.
+F3.3: Kiểm Lỗi Chất Lượng Tự Động (AI Quality Audit)
+Tự động phát hiện và sửa các lỗi AI: thừa/thiếu ngón tay, mắt méo, chữ AI dị thường, méo logo Wintop.
+3.4. KHỐI 4: KHỐI XUẤT BẢN (MULTI-FORMAT EXPORT)
+Sau khi qua Khối Tổng hợp, hình ảnh chuyển qua mũi tên --> đến Khối Xuất bản:
+F4.1: AI Upscaler 4K/8K
+Nâng nét độ phân giải từ ảnh sinh ra lên chuẩn 4K (3840x2160 / 3840x3840) hoặc 8K Ultra-HD.
+F4.2: Tự Động Tách Lớp File PSD/PNG
+Sử dụng SAM (Segment Anything Model) để xuất file PSD hoặc bộ ZIP PNG tách lớp:
+Layer 1 (Top): Text On-Art, Badge Cờ Mỹ / Sữa non.
+Layer 2: Packshot Sản phẩm Wintop + Mascot Hươu siêu nhân.
+Layer 3: Nhân vật chính (Mẹ & Bé).
+Layer 4 (Bottom): Phông nền (Background).
+F4.3: Xuất Đa Tỉ Lệ Tự Động (Multi-Aspect Ratio)
+Xuất đồng thời 3 kích thước chuẩn Social Media:
+Tỉ lệ 1:1 (1080x1080px): Facebook Square Post / Feed Ad.
+Tỉ lệ 9:16 (1080x1920px): TikTok Video Frame / Facebook Reels / Story.
+Tỉ lệ 16:9 (1920x1080px): Frame Video Điện Ảnh / Youtube.
+4. QUY CHUẨN GIAO DIỆN NGUYÊN BẢN (UI/UX SKETCH BLUEPRINT)
+4.1. Màn Hình Giao Diện Chi Tiết
++-----------------------------------------------------------------------------------------------------------------+|  Home        About                                                                                     (Account)|+-----------------------------------------------------------------------------------------------------------------+|                                                                                                                 ||  +--------------------+    ==>    +--------------------+    ==\                                                 ||  | INPUT              |           | PHÂN CẢNH STACK    |       \                                                ||  |                    |           |                    |        \                                               ||  | [ Ý TƯỞNG ]        |           | +----------------+ |         \    +------------------+    --> +-----------+ ||  | <Text Area>        |           | | Phân cảnh 1    | |          \   | TỔNG HỢP         |        | XUẤT BẢN  | ||  |                    |           | +----------------+ |           |  |                  |        |           | ||  | [ NGUYÊN LIỆU ]    |           | | Phân cảnh 2    | | ----------+->| • Inpainting     |------->| • 4K/8K   | ||  | [Dropdown Source v]|           | +----------------+ |           |  | • Consistency    |        | • Layer PSD| ||  | [File Upload Drop] |           | | Phân cảnh 3    | |          /   | • Quality Audit  |        | • 1:1     | ||  |                    |           | +----------------+ |         /    +------------------+        | • 9:16    | ||  | [ DỮ LIỆU MẪU ]    |           | | Phân cảnh N... | |        /                                 | • 16:9    | ||  | [Char][Prod][Masc] |           | +----------------+ |       /                                  +-----------+ ||  +--------------------+           +--------------------+    ==/                                                 ||                                                                                                                 |+-----------------------------------------------------------------------------------------------------------------+
+4.2. Quy Định Phối Màu UI
+Header / Top Bar: Light Gray / Dark Slate Neutral #1E293B.
+Primary Branding Color: Blue #00529B (Thương hiệu Wintop).
+Accent Highlight: Gold #F5A623 (Màu điểm nhấn dòng Colostrum Gain).
+Canvas Background: Neutral Dark #121621 giúp tôn màu ảnh preview.
+5. DATA SCHEMA & THÔNG SỐ TÍCH HỢP GOOGLE FLOW
+5.1. Input API Payload (JSON Schema)
+{  "app_id": "wintop-ai-flow-v3",  "header_context": {    "user_account": "marketing@wintop.vn",    "mode": "production"  },  "input_block": {    "y_tuong_prompt": "Mẹ công nhân tăng ca phòng trọ nhìn con ở quê ôm sữa Wintop đón Trung thu",    "nguyen_lieu_script": {      "source_type": "Kịch bản Social Content",      "file_url": "gs://wintop-assets/scripts/kitch_ban_trung_thu.docx"    },    "du_lieu_mau_assets": {      "slot_character": "gs://wintop-assets/inputs/char_me_cong_nhan.png",      "slot_product": "gs://wintop-assets/inputs/wintop_colostrum_400g.png",      "slot_mascot": "gs://wintop-assets/inputs/mascot_huou_sieunhan.png"    }  },  "pipeline_config": {    "auto_scene_parsing": true,    "tong_hop_inpainting": true,    "xuat_ban_ratios": ["1:1", "9:16", "16:9"],    "quality_upscale": "4K"  }}
+5.2. Output API Payload (JSON Schema)
+{  "status": "SUCCESS",  "job_id": "flow-job-20260912-88",  "scenes_processed": [    {      "scene_id": 1,      "prompt_en": "A tired Vietnamese female worker in a small dark room looking at glowing smartphone...",      "tong_hop_audit": {        "inpainting_status": "PASSED",        "face_consistency": 0.99,        "anatomical_errors": 0      },      "xuat_ban_outputs": {        "ratio_1x1": "gs://wintop-exports/scene_1_1x1.png",        "ratio_9x16": "gs://wintop-exports/scene_1_9x16.png",        "ratio_16x9": "gs://wintop-exports/scene_1_16x9.png",        "psd_layered": "gs://wintop-exports/scene_1_layers.psd"      }    }  ]}
+6. TIÊU CHUẨN NGHIỆM THU (ACCEPTANCE CRITERIA)
+STT
+Khối chức năng
+Tiêu chuẩn nghiệm thu (Pass Criteria)
+1
+Top Bar & Header
+Hiển thị đúng menu Home, About, Account; chuyển trạng thái tài khoản mượt mà dưới 0.5s.
+2
+Khối Input
+Cho phép nhập ý tưởng, tải nguyên liệu dạng file/text, và thả đủ 3 slot dữ liệu mẫu (Character, Product, Mascot).
+3
+Khối Script Engine
+Tự động bóc tách kịch bản ra chuỗi các ô Phân cảnh xếp chồng chuẩn xác theo từng Scene.
+4
+Khối Tổng hợp
+Chèn sản phẩm & Mascot đúng Safe Zone 1/3; 0% lỗi dị dạng ngón tay/mắt; giữ đúng 100% gương mặt nhân vật.
+5
+Khối Xuất bản
+Xuất chuẩn 3 tỉ lệ (1:1, 9:16, 16:9); chất lượng ảnh 4K/8K; file PSD chia đủ 4 layer phông trong suốt.

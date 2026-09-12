@@ -1,0 +1,513 @@
+{
+  "doc_title": "BẢN ĐẶC TẢ KIẾN TRÚC KỸ THUẬT VÀ PHÂN TÍCH TÁI CẤU TRÚC TOÀN DIỆN",
+  "doc_subtitle": "HỆ THỐNG TOOL TỰ ĐỘNG TẠO ẢNH WINTOP AI TRÊN NỀN TẢNG GOOGLE FLOW\nChuẩn Hóa 4 Trụ Cột: Frontend (Node-Based Canvas) | Backend (Vertex AI Pipelines) | Database (Firestore & GCS) | API Specification",
+  "meta_table": {
+    "headers": ["Thuộc tính", "Giá trị đặc tả", "Ghi chú kiến trúc"],
+    "rows": [
+      ["Tên hệ thống", "Wintop AI Image Studio Pipeline", "Mở rộng trực tiếp trên Google Flow / Vertex AI Studio"],
+      ["Mô hình vận hành", "Visual Node-based Canvas (Kéo thả trực quan)", "Tuân thủ chỉ đạo thiết kế các nút kéo thả trên Google Flow"],
+      ["Thương hiệu phục vụ", "Sữa dinh dưỡng Wintop (Colostrum Gain, Wintop Baby)", "Quy chuẩn Safe Zone 1/3, Mascot Hươu siêu nhân & Màu brand"],
+      ["Phiên bản tài liệu", "Version 4.0 - Enterprise Production Architecture", "Nâng cấp và tái cấu trúc toàn diện từ bản PRD phác thảo v3.0"],
+      ["Ngày cập nhật", "12/09/2026", "Tài liệu kỹ thuật chuẩn dành cho Dev, Solution Architect & QA Team"]
+    ]
+  },
+  "sections": [
+    {
+      "id": "sec1",
+      "heading": "PHẦN 1: PHÂN TÍCH ĐÁNH GIÁ VÀ ĐỊNH HƯỚNG TÁI CẤU TRÚC TỪ BẢN PRD GỐC",
+      "subsections": [
+        {
+          "heading": "1.1. Tóm tắt nội dung bản PRD gốc (v3.0)",
+          "paragraphs": [
+            "Bản mô tả yêu cầu sản phẩm ban đầu (PRD v3.0) đã đặt ra mục tiêu mang tính cách mạng cho thương hiệu Sữa dinh dưỡng Wintop: cắt giảm 85% thời gian sản xuất hình ảnh Key Visual và chuỗi phân cảnh quảng cáo (từ 4 tiếng/ảnh xuống dưới 30 giây/ảnh), đồng thời đảm bảo 100% hình ảnh sinh ra tuân thủ nhận diện thương hiệu, vị trí Safe Zone, tính nhất quán nhân vật và chất lượng render 4K/8K.",
+            "Về quy trình vận hành, PRD v3.0 phác thảo một chuỗi 4 khối chức năng tuần tự từ trái sang phải: Khối 1: Input (Ý tưởng, Nguyên liệu, Dữ liệu mẫu 3 slot); Khối 2: Script Engine (Bóc tách phân cảnh xếp chồng); Khối 3: Tổng hợp (Inpainting, Cross-scene Consistency, Safe Zone & Quality Audit); và Khối 4: Xuất bản (AI Upscaler 4K/8K, Tự động tách lớp PSD 4 layer, Đa tỉ lệ 1:1, 9:16, 16:9)."
+          ]
+        },
+        {
+          "heading": "1.2. Phân tích khoảng cách kỹ thuật (Gap Analysis) của PRD gốc",
+          "paragraphs": [
+            "Mặc dù đã bao quát tốt logic nghiệp vụ quảng cáo, bản PRD gốc còn mang tính phác thảo ý niệm (Conceptual Sketch) và bộc lộ nhiều điểm nghẽn kỹ thuật nghiêm trọng cần phải tái cấu trúc trước khi đưa vào phát triển phần mềm doanh nghiệp:"
+          ],
+          "table": {
+            "headers": ["Trụ cột kỹ thuật", "Hiện trạng ở PRD v3.0", "Hạn chế & Rủi ro vận hành", "Giải pháp tái cấu trúc chuẩn hóa (v4.0)"],
+            "rows": [
+              [
+                "Frontend Canvas",
+                "Giao diện chia 4 cột cố định từ trái sang phải, chưa chuẩn hóa thành các Node đồ họa.",
+                "Người dùng không thể rẽ nhánh kịch bản, không tái sử dụng được dữ liệu mẫu giữa các cảnh, không chỉnh sửa riêng lẻ từng node.",
+                "Chuyển đổi hoàn toàn sang mô hình Visual Drag-and-Drop Node Canvas trên Google Flow với các Custom Node có Input/Output Port chuẩn mực."
+              ],
+              [
+                "Backend Engine",
+                "Mô tả chung chung là 'Gemini Pro Node' và 'Google Flow', thiếu hoàn toàn cơ chế điều phối.",
+                "Dễ nghẽn cổ chai khi xử lý batch 20-30 phân cảnh; không có cơ chế retry khi chạm API Rate Limits; không kiểm soát được concurrency GPU.",
+                "Xây dựng kiến trúc Vertex AI Pipelines kết hợp Cloud Run Microservices, vận hành theo đồ thị DAG hướng sự kiện (Event-driven) có hàng đợi Cloud Tasks."
+              ],
+              [
+                "Cơ sở dữ liệu",
+                "Chỉ đưa ra 2 mẫu JSON giả lập request/response, hoàn toàn không có Database Schema.",
+                "Không lưu được trạng thái đồ thị (Graph State), mất lịch sử phiên làm việc, không truy vết được prompt/seed, không lưu trữ vector khuôn mặt.",
+                "Thiết kế hệ sinh thái Hybrid DB: Firestore NoSQL (lưu Graph State, Metadata, Session) + GCS (Assets, PSD) + Vertex AI Vector Search (Face ID)."
+              ],
+              [
+                "Giao diện API",
+                "Thiếu danh mục RESTful Endpoints, status codes, cơ chế xác thực và phương thức streaming tiến độ.",
+                "Frontend phải polling liên tục gây quá tải server; không hỗ trợ tích hợp CI/CD hoặc các công cụ tự động hóa bên ngoài của marketing.",
+                "Đặc tả đầy đủ 15+ RESTful Endpoints chuẩn OpenAPI 3.0, tích hợp bảo mật OAuth2/Service Account và kênh WebSocket/SSE streaming tiến độ thời gian thực."
+              ]
+            ]
+          }
+        },
+        {
+          "heading": "1.3. Định hướng chuyển dịch kiến trúc sang Node-based Canvas trên Google Flow",
+          "paragraphs": [
+            "Thay vì xây dựng một trang web biểu mẫu tĩnh, giải pháp tối ưu là phát triển một bộ Custom Node Extension tích hợp trực tiếp vào môi trường Canvas của Google Flow và Vertex AI Studio. Người dùng là Creative Director, Content Creator hoặc Graphic Designer có thể kéo các nút chức năng từ bảng công cụ, thả vào màn hình, nối dây dữ liệu giữa các cổng và bấm chạy trực quan tương tự các phần mềm xử lý pipeline AI hiện đại nhất."
+          ],
+          "callout": {
+            "title": "Nguyên tắc thiết kế Node-based trong Google Flow",
+            "content": "Mỗi nút (Node) phải là một thực thể độc lập (Self-contained), có giao diện điều khiển tham số riêng, có cổng nhận/xuất dữ liệu được định kiểu chặt chẽ (Strongly Typed Ports) và có khả năng lưu trữ trạng thái chạy riêng biệt để hỗ trợ Debug và Cache kết quả trung gian."
+          }
+        }
+      ]
+    },
+    {
+      "id": "sec2",
+      "heading": "PHẦN 2: THIẾT KẾ CHI TIẾT FRONTEND (GOOGLE FLOW NODE-BASED CANVAS)",
+      "subsections": [
+        {
+          "heading": "2.1. Cấu trúc tổng thể Workspace Canvas & Top Bar",
+          "paragraphs": [
+            "Giao diện người dùng được tổ chức theo tiêu chuẩn Extension Canvas trên nền Google Flow bao gồm các phân khu chức năng trực quan:",
+            "• Top Bar (Thanh điều hướng trên cùng): Chứa Logo Wintop AI Studio, Menu điều hướng nhanh (Home, Projects, Brand Guidelines, Account Quota), Selector chọn phiên bản kịch bản (Version Switcher: v1, v2, v3), Nút 'Run Pipeline' tổng thể, Nút 'Save Graph' và Chỉ báo kết nối WebSocket realtime.",
+            "• Left Node Palette (Thư viện Node): Thanh công cụ kéo thả chứa 4 nhóm Node của Wintop AI: [1] Ingestion Node, [2] Script-to-Prompt Stack Node, [3] Synthesis & Audit Node, [4] Multi-Format Export Node.",
+            "• Main Infinite Canvas (Không gian làm việc vô cực): Nền dạng lưới tối (#121621), hỗ trợ Pan (di chuột/bấm chuột giữa), Zoom vô cực từ 10% đến 200%, phím tắt căn giữa (Center View: Spacebar + F), hỗ trợ chọn nhiều node (Lasso Selection) và căn thẳng hàng tự động (Auto-layout).",
+            "• Right Inspector Panel (Bảng thuộc tính): Khi click chọn bất kỳ Node nào trên canvas, bảng bên phải sẽ trượt ra hiển thị các tham số chuyên sâu, nhật ký log thời gian thực và ảnh preview phân giải cao của node đó.",
+            "• Mini-map & View Controls (Góc dưới bên phải): Bản đồ thu nhỏ hiển thị toàn cảnh đồ thị các node cùng nút Zoom In, Zoom Out, Reset 100% và Fullscreen."
+          ]
+        },
+        {
+          "heading": "2.2. Đặc tả chi tiết 4 Custom Node kéo-thả (Core Node Specifications)",
+          "paragraphs": [
+            "Dưới đây là đặc tả kỹ thuật chi tiết của 4 Node thành phần tương ứng với 4 khối trong yêu cầu:"
+          ],
+          "subsections": [
+            {
+              "heading": "Node 1: Wintop Ingestion & Brand Asset Node (Nút Nhập Liệu & Tài Nguyên)",
+              "paragraphs": [
+                "Nút khởi nguồn (Source Node) cho mọi luồng sinh ảnh, chịu trách nhiệm thu thập ý tưởng, kịch bản thô và quản lý 3 slot tài nguyên thương hiệu độc quyền:",
+                "• Thuộc tính điều khiển trên Node (In-node Controls):",
+                "  - Textarea 'Ý Tưởng Sáng Tạo': Hỗ trợ gõ prompt thô bằng tiếng Việt hoặc tiếng Anh. Tích hợp AI Suggester tự động gợi ý thông điệp chuẩn ngành sữa Wintop (Sữa non Mỹ 24h, Kháng thể IgG 1200mg, HMO, Tổ yến đảo thiên nhiên, Bé khỏe mẹ yên tâm).",
+                "  - Dropdown 'Loại Kịch Bản': Cho phép chọn thể loại: Kịch bản Social Content, Kịch bản Storyboard TVC 30s, Insight Bán Hàng, hoặc Prompt Mẫu Chuẩn.",
+                "  - File Dropzone 'Văn Bản Kịch Bản': Kéo thả file .docx, .xlsx (như kịch bản Trung Thu Wintop V3 miền Bắc), .pdf hoặc .txt. Tự động đọc và bóc tách nội dung ngay lập tức.",
+                "  - Khung 3 Slot Tài Nguyên Mẫu (Asset Reference Dropzone):",
+                "    + Slot Character: Chứa ảnh mẫu nhân vật (Mẹ công nhân, Con gái Lan, Bà ngoại). Tự động crop khuôn mặt và tính toán Face Landmark.",
+                "    + Slot Product: Chứa file PNG trong suốt chuẩn của Lon sữa Wintop Colostrum Gain 400g/800g hoặc Hộp sữa pha sẵn 110ml/180ml.",
+                "    + Slot Mascot: Chứa file PNG/Vector của Linh vật Hươu siêu nhân nhận diện thương hiệu Wintop.",
+                "• Các Cổng Kết Nối (Ports):",
+                "  - Output Port 1: 'script_stream' (Kiểu dữ liệu: Text/Markdown - Truyền nội dung văn bản kịch bản sang Node phân cảnh).",
+                "  - Output Port 2: 'assets_bundle' (Kiểu dữ liệu: AssetBundle Object - Chứa đường dẫn GCS và metadata của Character, Product và Mascot để truyền sang Node tổng hợp)."
+              ]
+            },
+            {
+              "heading": "Node 2: Gemini Script-to-Prompt Stack Node (Nút Bóc Tách Phân Cảnh)",
+              "paragraphs": [
+                "Nút xử lý ngôn ngữ tự nhiên, sử dụng mô hình Gemini 1.5/2.0 Pro để bóc tách kịch bản thành danh sách các phân cảnh xếp chồng (Scene Stack) trực quan:",
+                "• Giao diện hiển thị trực quan (Stack UI Container): Hiển thị dạng danh sách cuộn các Thẻ Phân Cảnh (Scene Cards) được đánh số thứ tự từ Scene 1 đến Scene N.",
+                "• Thành phần của mỗi Thẻ Phân Cảnh (Scene Card):",
+                "  - Tiêu đề Scene (Ví dụ: Scene 01 - Phòng trọ mẹ tăng ca đêm ngắm ảnh con).",
+                "  - Thumbnail nháp phác thảo (Sketch preview do Gemini sinh nhanh trong 1 giây).",
+                "  - Textbox Prompt tiếng Anh chuẩn điện ảnh: Cho phép người dùng trực tiếp sửa đổi prompt trước khi render.",
+                "  - Cấu trúc Prompt chuẩn hóa tự động: [Subject & Precise Action] + [Environment & Emotional Mood] + [Brand Asset Tags: <wintop_can>, <wintop_mascot>] + [Cinematic Camera: 35mm lens, f/1.8, soft volumetric lighting] + [Negative Quality Constraints].",
+                "  - Nút 'Tách cảnh' (Split), 'Gộp cảnh' (Merge) và 'Tái sinh prompt' (Regenerate).",
+                "• Các Cổng Kết Nối (Ports):",
+                "  - Input Port: 'script_in' (Nhận luồng văn bản từ Node 1).",
+                "  - Output Port: 'scenes_array' (Phát mảng các Scene Object sang Node Tổng hợp)."
+              ]
+            },
+            {
+              "heading": "Node 3: Synthesis & Audit Engine Node (Nút Tổng Hợp & Kiểm Duyệt Mỹ Thuật)",
+              "paragraphs": [
+                "Nút trung tâm chịu trách nhiệm sinh ảnh nền tảng, thực hiện kỹ thuật Inpainting chèn tài nguyên và kiểm định chất lượng tự động:",
+                "• Thuộc tính điều khiển trên Node:",
+                "  - Safe Zone 1/3 Toggle: Bật lưới an toàn tỷ lệ vàng. Thuật toán tự động tìm khoảng trống âm (Negative Space) ở 1/3 bên trái hoặc bên phải khung hình để đặt Lon sữa Wintop và Mascot mà tuyệt đối không che đè khuôn mặt hay hành động của nhân vật chính.",
+                "  - Cross-Scene Face Consistency Slider: Thanh trượt từ 0.70 đến 1.00 (mặc định 0.95), áp dụng công nghệ IP-Adapter / ControlNet FaceID để giữ nguyên 100% đường nét khuôn mặt của Mẹ và Bé qua tất cả các cảnh.",
+                "  - Lighting & Shadow Harmonization Toggle: Tự động phân tích vector hướng sáng của cảnh nền (Key Light, Ambient Light) và tự động tạo ánh sáng viền (Rim Light) cùng bóng đổ tiếp xúc (Contact Shadow) chân thực cho lon sữa Wintop.",
+                "  - AI Quality Inspector Widget: Đồng hồ đo 3 tiêu chuẩn kiểm lỗi tự động:",
+                "    + Anatomical Error Check: Phát hiện và tự động sửa lỗi ngón tay dị thường (6 ngón, dính ngón), mắt lé, biến dạng cơ thể.",
+                "    + Brand Integrity Check: Phát hiện logo Wintop bị méo mó, mờ nhạt hoặc sai màu thương hiệu.",
+                "    + Text Artifact Check: Loại bỏ triệt để các ký tự AI dị thường xuất hiện ngẫu nhiên trên bối cảnh.",
+                "• Các Cổng Kết Nối (Ports):",
+                "  - Input Port 1: 'scenes_in' (Nhận mảng phân cảnh từ Node 2).",
+                "  - Input Port 2: 'assets_in' (Nhận gói tài nguyên Character, Product, Mascot từ Node 1).",
+                "  - Output Port: 'audited_renders' (Phát mảng ảnh render đã qua kiểm duyệt sang Node Xuất bản)."
+              ]
+            },
+            {
+              "heading": "Node 4: Multi-Format Export Node (Nút Xuất Bản Đa Định Dạng)",
+              "paragraphs": [
+                "Nút hoàn thiện đóng gói sản phẩm đầu ra, cung cấp khả năng nâng cấp độ nét cực cao và tách lớp file đồ họa chuyên nghiệp:",
+                "• Thuộc tính điều khiển trên Node:",
+                "  - Bộ chọn độ phân giải AI Upscaler: Cho phép chọn 2K, 4K (3840x2160) hoặc 8K Ultra-HD (sử dụng thuật toán Real-ESRGAN x4plus chạy trên GPU L4).",
+                "  - Bộ chọn đa tỷ lệ đồng thời (Multi-Aspect Ratio Checkbox): Cho phép tích chọn xuất cùng lúc 3 kích thước:",
+                "    + 1:1 (1080x1080px): Chuẩn bài đăng vuông Facebook Feed, Instagram Post.",
+                "    + 9:16 (1080x1920px): Chuẩn video dọc TikTok, Facebook Reels, Youtube Shorts, Story.",
+                "    + 16:9 (1920x1080px): Chuẩn màn hình ngang Youtube Banner, TVC Display, Billboard LED.",
+                "    + Cơ chế tự động: Tự động Outpainting (mở rộng biên ảnh thông minh) mà không làm méo chủ thể ở trung tâm.",
+                "  - Tự động tách lớp File PSD (Segment Anything Model - SAM):",
+                "    + Nút gạt 'Generate 4-Layer PSD': Tự động cắt ảnh thành file Photoshop hoàn chỉnh gồm 4 Layer độc lập có nền trong suốt:",
+                "      * Layer 1 (Top): Text On-Art, Badge kiểm định chất lượng, Huy hiệu Cờ Mỹ, Logo Wintop.",
+                "      * Layer 2: Packshot Sản phẩm Lon/Hộp Wintop + Mascot Hươu siêu nhân.",
+                "      * Layer 3: Nhân vật chính (Mẹ, Bé, Bà) đã tách viền tóc mượt mà.",
+                "      * Layer 4 (Bottom): Phông nền (Background hoàn chỉnh đã được inpaint xóa chủ thể).",
+                "  - Nút tác vụ nhanh: 'Download Toàn Bộ ZIP', 'Lưu Trực Tiếp Vào GCS Bucket', 'Gửi Thông Báo Tới Slack/Zalo Marketing'."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "2.3. Quy tắc nối dây kết nối (Wire Connections) và Ràng buộc kiểu dữ liệu",
+          "paragraphs": [
+            "Hệ thống dây kết nối (Wires/Cables) giữa các Node được kiểm soát bằng hệ thống Type Checker thời gian thực. Nếu người dùng kéo cổng không tương thích (ví dụ kéo cổng Text vào cổng Image), hệ thống sẽ hiển thị dây màu đỏ và ngăn chặn kết nối:"
+          ],
+          "table": {
+            "headers": ["Cổng nguồn (Source Port)", "Node xuất", "Cổng đích (Target Port)", "Node nhận", "Kiểu dữ liệu Payload", "Ràng buộc kiểm tra"],
+            "rows": [
+              ["script_stream", "Ingestion Node", "script_in", "Scene Stack Node", "String / Markdown", "Độ dài ký tự > 10; không được rỗng"],
+              ["assets_bundle", "Ingestion Node", "assets_in", "Synthesis Node", "Object {char, prod, mascot}", "Bắt buộc có ít nhất 1 slot Product hợp lệ"],
+              ["scenes_array", "Scene Stack Node", "scenes_in", "Synthesis Node", "Array<SceneObject>", "Số lượng Scene tối thiểu là 1, tối đa 50"],
+              ["audited_renders", "Synthesis Node", "renders_in", "Export Node", "Array<RenderObject>", "Điểm kiểm định Audit Score >= 0.90"]
+            ]
+          }
+        },
+        {
+          "heading": "2.4. Máy trạng thái của Node (Node State Machine) & Hiệu ứng phát sáng",
+          "paragraphs": [
+            "Mỗi Node trên Canvas phản hồi trạng thái vận hành qua màu viền phát sáng (Glow effect) và thanh tiến trình phần trăm:",
+            "• Trạng thái IDLE (Viền xám #64748B): Node sẵn sàng, đang chờ dữ liệu đầu vào hoặc chờ lệnh thực thi.",
+            "• Trạng thái RUNNING (Viền xanh Wintop phát sáng nhấp nháy #00529B): Node đang gửi tác vụ xuống Backend và chờ GPU xử lý. Trên thân node hiển thị thanh progress bar % và spinner xoay.",
+            "• Trạng thái COMPLETED (Viền xanh lục #10B981): Tác vụ xử lý thành công 100%. Node hiển thị biểu tượng tích xanh và thumbnail kết quả trực tiếp.",
+            "• Trạng thái WARNING/ERROR (Viền đỏ #EF4444): Có lỗi xảy ra (lỗi định dạng file, lỗi API limit, hoặc vi phạm Safe Zone). Bấm vào node sẽ hiển thị tooltip giải thích nguyên nhân và nút 'Thử lại' (Retry)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec3",
+      "heading": "PHẦN 3: THIẾT KẾ CHI TIẾT BACKEND & ORCHESTRATION ENGINE",
+      "subsections": [
+        {
+          "heading": "3.1. Mô hình kiến trúc phân tán hướng sự kiện (Event-Driven Microservices)",
+          "paragraphs": [
+            "Backend của Wintop AI Tool được xây dựng trên nền tảng Google Cloud Platform (GCP) tuân theo mô hình điện toán phi trạng thái (Stateless Cloud Native), kết hợp hài hòa giữa Google Cloud Run và Vertex AI Pipelines:",
+            "• API Gateway & Workflow Orchestrator (Cloud Run Service): Được viết bằng Python FastAPI, đóng vai trò tiếp nhận đồ thị Node Graph từ Google Flow Canvas, biên dịch đồ thị thành một DAG (Directed Acyclic Graph) thực thi trên Vertex AI.",
+            "• Message Broker & Task Queue (Cloud Pub/Sub & Cloud Tasks): Đảm bảo các tác vụ render nặng của từng Scene được xếp hàng xử lý tuần tự hoặc song song, điều tiết lưu lượng để không vượt quá Quota giới hạn GPU/API của dự án.",
+            "• Worker Microservices (Artifact Registry & Cloud Run GPU / GKE): Các container độc lập được tối ưu hóa chuyên sâu cho từng nhiệm vụ trí tuệ nhân tạo."
+          ]
+        },
+        {
+          "heading": "3.2. Chi tiết 5 Microservice Worker chuyên dụng",
+          "paragraphs": [
+            "Hệ thống phân rã thành 5 cụm worker chuyên biệt đảm bảo tính cô lập lỗi và khả năng scale độc lập:"
+          ],
+          "subsections": [
+            {
+              "heading": "Worker 1: Script Parsing & Scene Extraction Service (Gemini Pro Engine)",
+              "paragraphs": [
+                "• Công nghệ: Python 3.11, Vertex AI SDK, Gemini 1.5/2.0 Pro API.",
+                "• Nhiệm vụ: Tiếp nhận file docx/xlsx kịch bản từ Ingestion Node. Sử dụng kỹ thuật Few-shot Chain-of-Thought prompting với bộ mẫu kịch bản sữa Wintop chuẩn hóa. Phân tích ngữ cảnh câu chuyện, trích xuất danh sách nhân vật, tâm trạng, bối cảnh ánh sáng và dịch thành câu lệnh Prompt tiếng Anh giàu tính hội họa (Rich Descriptive Prompts).",
+                "• Thời gian xử lý trung bình: 1.8 - 3.5 giây cho một kịch bản 10 - 20 phân cảnh."
+              ]
+            },
+            {
+              "heading": "Worker 2: Base Image Generation & Face Consistency Service (Imagen 3 + IP-Adapter)",
+              "paragraphs": [
+                "• Công nghệ: Vertex AI Imagen 3, IP-Adapter FaceID, PyTorch, GPU NVIDIA L4.",
+                "• Nhiệm vụ: Sinh ảnh nền tảng cho từng phân cảnh dựa trên prompt tiếng Anh từ Worker 1. Đối với các cảnh có nhân vật Mẹ hoặc Bé, worker trích xuất Vector đặc trưng khuôn mặt (Face Embeddings) từ ảnh mẫu ở Slot Character và tiêm vào lớp Cross-Attention của mô hình khuếch tán, đảm bảo gương mặt nhân vật giống ảnh mẫu tới 98% qua mọi góc nghiêng và biểu cảm.",
+                "• Thời gian xử lý trung bình: 5 - 8 giây/ảnh ở độ phân giải gốc 1024x1024."
+              ]
+            },
+            {
+              "heading": "Worker 3: Safe Zone Inpainting & Shadow Synthesis Worker",
+              "paragraphs": [
+                "• Công nghệ: OpenCV, MiDaS / ZoeDepth (Ước lượng bản đồ chiều sâu), Segment Anything Model, Pillow.",
+                "• Nhiệm vụ:",
+                "  1. Phân tích vùng không gian trống (Negative Space) ở 1/3 trái hoặc phải theo quy tắc tỷ lệ vàng nhiếp ảnh.",
+                "  2. Tự động tính toán kích thước lon sữa Wintop Colostrum Gain tương quan với nhân vật và đặt vào vị trí thích hợp mà không che khuất nhân vật.",
+                "  3. Ước lượng vector hướng chiếu sáng từ ảnh nền (Key Light vector) để tạo bóng đổ tiếp xúc (Contact Shadow) và viền sáng (Rim Light) tự nhiên cho lon sữa và Mascot Hươu siêu nhân.",
+                "• Thời gian xử lý trung bình: 2.2 giây/ảnh."
+              ]
+            },
+            {
+              "heading": "Worker 4: Segmentation & PSD Multi-Layer Assembler Service",
+              "paragraphs": [
+                "• Công nghệ: Meta Segment Anything Model (SAM), psd-tools, NumPy.",
+                "• Nhiệm vụ:",
+                "  1. Sử dụng mô hình SAM để tự động bóc tách 4 vùng đối tượng chính: Text/Logo, Packshot Sản Phẩm + Mascot, Nhân Vật Người, và Phông Nền.",
+                "  2. Áp dụng thuật toán Inpainting nhẹ để 'hàn gắn' phần phông nền bị nhân vật và lon sữa che đè, tạo thành một Background hoàn chỉnh không có lỗ thủng.",
+                "  3. Sử dụng thư viện `psd-tools` để đóng gói thành file `.PSD` chuẩn 16-bit Adobe Photoshop với 4 Layer riêng biệt, đặt tên chuẩn tiếng Anh (Layer 1: Text_Badges, Layer 2: Wintop_Assets, Layer 3: Main_Subjects, Layer 4: Clean_Background).",
+                "• Thời gian xử lý trung bình: 4.5 giây/phân cảnh."
+              ]
+            },
+            {
+              "heading": "Worker 5: Super-Resolution AI Upscaler & Multi-Ratio Cropper",
+              "paragraphs": [
+                "• Công nghệ: Real-ESRGAN x4plus, OpenCV, CUDA 12.",
+                "• Nhiệm vụ:",
+                "  1. Nâng nét siêu phân giải từ kích thước ban đầu lên 3840x2160 (chuẩn 4K UHD) hoặc 7680x4320 (chuẩn 8K) với độ sắc nét tuyệt đối, khử nhiễu hạt và làm rõ chi tiết chữ trên nhãn lon sữa Wintop.",
+                "  2. Tự động sinh đồng thời 3 kích thước chuẩn: Vuông 1:1 (1080x1080), Dọc 9:16 (1080x1920) và Ngang 16:9 (1920x1080) bằng kỹ thuật Outpainting mở rộng biên thông minh, giữ chủ thể luôn nằm trong Safe Zone hiển thị của mạng xã hội.",
+                "• Thời gian xử lý trung bình: 3.5 giây/ảnh 4K."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "3.3. Cơ chế chịu lỗi, Retry và Điều phối tài nguyên (Resilience & Quota Control)",
+          "paragraphs": [
+            "Để vận hành ổn định trong môi trường doanh nghiệp có nhiều người dùng đồng thời, Backend tích hợp các cơ chế bảo vệ nghiêm ngặt:",
+            "• Rate Limiting & Concurrency Control: Hàng đợi Cloud Tasks giới hạn tối đa 5 tác vụ GPU chạy đồng thời cho mỗi tài khoản doanh nghiệp để tránh nghẽn băng thông Vertex AI.",
+            "• Thuật toán Exponential Backoff: Khi nhận mã lỗi HTTP 429 (Quota Exceeded) từ Vertex AI, worker tự động lùi bước thời gian ngẫu nhiên (1.5s, 3s, 6s, 12s) tối đa 5 lần trước khi báo lỗi.",
+            "• Dead Letter Queue (DLQ): Các tác vụ bị lỗi quá 5 lần sẽ được đẩy vào hàng đợi tử để Admin kiểm tra nguyên nhân mà không làm nghẽn các phân cảnh khác trong cùng kịch bản."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec4",
+      "heading": "PHẦN 4: THIẾT KẾ CƠ SỞ DỮ LIỆU (DATABASE ARCHITECTURE)",
+      "subsections": [
+        {
+          "heading": "4.1. Chiến lược lưu trữ đa tầng (Hybrid Storage Strategy)",
+          "paragraphs": [
+            "Hệ thống ứng dụng mô hình lưu trữ hỗn hợp tối ưu nhất của Google Cloud Platform:",
+            "• Tầng 1 - NoSQL Document Database (Google Cloud Firestore): Lưu trữ toàn bộ trạng thái đồ thị Canvas (Nodes, Wires, Positions), phiên người dùng, tiến độ từng phân cảnh, metadata và audit log với tốc độ đọc/ghi thời gian thực dưới 10ms.",
+            "• Tầng 2 - Object Storage (Google Cloud Storage - GCS): Lưu trữ nhị phân các tài nguyên media dung lượng lớn: file kịch bản (.docx, .xlsx), ảnh nguyên liệu gốc, ảnh render trung gian, ảnh thành phẩm 4K và tệp phân lớp Photoshop (.psd).",
+            "• Tầng 3 - Vector Search Database (Vertex AI Vector Search): Lưu trữ các vector embedding 512 chiều trích xuất từ khuôn mặt nhân vật mẫu và mẫu sản phẩm Wintop, phục vụ tính năng đối soát tính nhất quán thương hiệu."
+          ]
+        },
+        {
+          "heading": "4.2. Từ điển dữ liệu chi tiết trên Cloud Firestore (Data Dictionary)",
+          "paragraphs": [
+            "Cấu trúc các Collections chính trong Firestore được chuẩn hóa như sau:"
+          ],
+          "subsections": [
+            {
+              "heading": "1. Collection: `projects` (Quản lý dự án chiến dịch)",
+              "table": {
+                "headers": ["Trường dữ liệu (Field)", "Kiểu dữ liệu", "Ràng buộc", "Mô tả ý nghĩa nghiệp vụ"],
+                "rows": [
+                  ["project_id", "String (UUID)", "Primary Key", "Mã định danh duy nhất của chiến dịch"],
+                  ["name", "String", "Required", "Tên chiến dịch (VD: Wintop Trung Thu 2026 - Mẹ Tăng Ca)"],
+                  ["brand_category", "String", "Enum", "'colostrum_gain', 'wintop_baby', 'pha_san_110ml'"],
+                  ["created_by", "String (Email)", "Required", "Email nhân sự Marketing phụ trách"],
+                  ["created_at", "Timestamp", "Auto", "Thời điểm tạo dự án"],
+                  ["updated_at", "Timestamp", "Auto", "Thời điểm cập nhật mới nhất"],
+                  ["active_flow_id", "String", "Ref", "Khóa ngoại trỏ tới đồ thị Canvas đang áp dụng"]
+                ]
+              }
+            },
+            {
+              "heading": "2. Collection: `canvas_graphs` (Đồ thị Google Flow Canvas)",
+              "table": {
+                "headers": ["Trường dữ liệu (Field)", "Kiểu dữ liệu", "Ràng buộc", "Mô tả ý nghĩa nghiệp vụ"],
+                "rows": [
+                  ["graph_id", "String (UUID)", "Primary Key", "Mã định danh của đồ thị canvas"],
+                  ["project_id", "String (UUID)", "Indexed", "Dự án liên kết"],
+                  ["viewport_state", "Map {zoom, pan_x, pan_y}", "Required", "Trạng thái góc nhìn và tỷ lệ thu phóng hiện tại"],
+                  ["nodes_count", "Integer", "Default: 4", "Số lượng node đang có trên màn hình"],
+                  ["wires_list", "Array<Map>", "JSON Array", "Danh sách các dây kết nối giữa các cổng: [{from_node, from_port, to_node, to_port}]"],
+                  ["last_executed_at", "Timestamp", "Nullable", "Thời điểm bấm chạy pipeline gần nhất"]
+                ]
+              }
+            },
+            {
+              "heading": "3. Collection: `canvas_nodes` (Chi tiết từng Node trên Canvas)",
+              "table": {
+                "headers": ["Trường dữ liệu (Field)", "Kiểu dữ liệu", "Ràng buộc", "Mô tả ý nghĩa nghiệp vụ"],
+                "rows": [
+                  ["node_id", "String (UUID)", "Primary Key", "Mã định danh node đồ họa"],
+                  ["graph_id", "String (UUID)", "Indexed", "Thuộc đồ thị nào"],
+                  ["node_type", "String", "Enum", "'wintop_ingestion', 'gemini_script_stack', 'synthesis_audit', 'export_multiformat'"],
+                  ["position_x", "Float", "Required", "Tọa độ trục ngang X trên Canvas"],
+                  ["position_y", "Float", "Required", "Tọa độ trục dọc Y trên Canvas"],
+                  ["status", "String", "Enum", "'IDLE', 'RUNNING', 'COMPLETED', 'FAILED'"],
+                  ["progress_percent", "Integer", "0 - 100", "Tiến độ phần trăm thực thi của node"],
+                  ["node_config", "Map (JSON)", "Required", "Tham số tùy chỉnh: {safe_zone: true, upscale_res: '4K', face_weight: 0.95}"]
+                ]
+              }
+            },
+            {
+              "heading": "4. Collection: `scenes` (Danh mục Phân cảnh bóc tách chi tiết)",
+              "table": {
+                "headers": ["Trường dữ liệu (Field)", "Kiểu dữ liệu", "Ràng buộc", "Mô tả ý nghĩa nghiệp vụ"],
+                "rows": [
+                  ["scene_id", "String (UUID)", "Primary Key", "Mã định danh phân cảnh duy nhất"],
+                  ["project_id", "String (UUID)", "Indexed", "Dự án sở hữu"],
+                  ["scene_number", "Integer", "1-indexed", "Số thứ tự phân cảnh (Scene 1, Scene 2...)"],
+                  ["storyboard_action_vi", "String", "Required", "Mô tả hành động tiếng Việt trích xuất từ kịch bản"],
+                  ["cinematic_prompt_en", "String", "Required", "Câu prompt tiếng Anh chi tiết đưa vào Imagen 3"],
+                  ["negative_prompt", "String", "Default", "Bộ từ khóa cấm (deformed hands, blurry, bad anatomy)"],
+                  ["audit_metrics", "Map (JSON)", "JSON", "Kết quả audit: {face_similarity: 0.97, safe_zone_passed: true, defect_count: 0}"],
+                  ["export_file_urls", "Map (JSON)", "JSON", "URLs GCS: {ratio_1x1, ratio_9x16, ratio_16x9, layered_psd}"]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "heading": "4.3. Cấu trúc cây thư mục lưu trữ trên Google Cloud Storage (Bucket Hierarchy)",
+          "paragraphs": [
+            "Tất cả tệp nhị phân được tổ chức theo cây phân cấp logic trên Cloud Storage bucket `gs://wintop-ai-media-vault/` với chính sách bảo mật khóa quyền truy cập công cộng (Enforce Public Access Prevention):"
+          ],
+          "code_block": "gs://wintop-ai-media-vault/\n├── brand_master_library/               # Kho tài nguyên thương hiệu chuẩn (Read-only)\n│   ├── products/\n│   │   ├── colostrum_gain_400g_front_4k.png\n│   │   ├── colostrum_gain_800g_perspective.png\n│   │   └── hop_pha_san_180ml_transparent.png\n│   └── mascots/\n│       ├── huou_sieunhan_dung_chao_4k.png\n│       └── huou_sieunhan_bay_nang_dong.png\n└── campaigns/\n    └── {project_id}/                  # Thư mục riêng của từng dự án\n        ├── source_inputs/\n        │   ├── scripts/               # Kịch bản gốc (.docx, .xlsx)\n        │   └── character_references/  # Chân dung mẹ, bé, bà ngoại\n        ├── intermediate_stages/\n        │   ├── scene_01_raw_render.png\n        │   └── scene_01_inpainted_mask.png\n        └── ready_to_publish/\n            ├── scene_01/\n            │   ├── scene_01_ratio_1x1_4k.png\n            │   ├── scene_01_ratio_9x16_story.png\n            │   ├── scene_01_ratio_16x9_banner.png\n            │   └── scene_01_editable_master.psd\n            └── campaign_full_package.zip"
+        }
+      ]
+    },
+    {
+      "id": "sec5",
+      "heading": "PHẦN 5: ĐẶC TẢ GIAO DIỆN LẬP TRÌNH ỨNG DỤNG (API SPECIFICATIONS)",
+      "subsections": [
+        {
+          "heading": "5.1. Tiêu chuẩn kiến trúc API & Cơ chế bảo mật",
+          "paragraphs": [
+            "Hệ thống cung cấp bộ giao diện lập trình ứng dụng hoàn chỉnh đáp ứng đầy đủ yêu cầu tương tác giữa Google Flow Canvas Extension và các Backend Microservices:",
+            "• Giao thức truyền thông: HTTPS / TLS 1.3 cho RESTful APIs; WSS (Secure WebSocket) cho kênh streaming trạng thái node hai chiều.",
+            "• Chuẩn thiết kế: RESTful tuân thủ tiêu chuẩn OpenAPI 3.0 với định dạng dữ liệu truyền tải chuẩn JSON (application/json) hoặc Multipart Form Data (cho tệp tải lên).",
+            "• Cơ chế xác thực: Mọi yêu cầu từ client phải đính kèm JSON Web Token (JWT) trong Header: `Authorization: Bearer <GCP_OIDC_ID_TOKEN>` kèm theo định danh dự án `X-Wintop-Project-Id: <UUID>`."
+          ]
+        },
+        {
+          "heading": "5.2. Danh mục chi tiết các RESTful Endpoints",
+          "paragraphs": [
+            "Bảng tổng hợp danh mục các Endpoints cung cấp cho Google Flow Canvas:"
+          ],
+          "table": {
+            "headers": ["Nhóm tính năng", "HTTP Method", "Đường dẫn Endpoint", "Mô tả chức năng nghiệp vụ"],
+            "rows": [
+              ["Ingestion", "POST", "/api/v4/projects/{id}/ingest-materials", "Tải lên file kịch bản (.docx/.xlsx) và 3 slot ảnh mẫu (Mẹ, Lon sữa, Mascot)"],
+              ["Ingestion", "GET", "/api/v4/projects/{id}/assets-status", "Lấy danh sách các asset đã tải lên và trạng thái trích xuất vector khuôn mặt"],
+              ["Script Engine", "POST", "/api/v4/projects/{id}/parse-script", "Kích hoạt Gemini Pro bóc tách kịch bản thành mảng các Scene Cards xếp chồng"],
+              ["Script Engine", "GET", "/api/v4/projects/{id}/scenes", "Lấy toàn bộ danh sách các phân cảnh hiện có trong dự án"],
+              ["Scene Tuning", "PUT", "/api/v4/scenes/{scene_id}/prompt", "Cập nhật prompt tiếng Anh hoặc hành động nhân vật cho một phân cảnh cụ thể"],
+              ["Synthesis", "POST", "/api/v4/scenes/{scene_id}/synthesize", "Chạy inpainting chèn lon sữa đúng Safe Zone 1/3 và khóa nhận diện khuôn mặt"],
+              ["Synthesis", "GET", "/api/v4/scenes/{scene_id}/audit-report", "Truy vấn báo cáo kiểm định AI (tỷ lệ giống mặt, kiểm tra ngón tay, méo logo)"],
+              ["Export", "POST", "/api/v4/scenes/{scene_id}/export-assets", "Thực hiện AI Upscale 4K/8K, sinh ảnh đa tỷ lệ (1:1, 9:16, 16:9) và xuất file PSD"],
+              ["Batch Pipeline", "POST", "/api/v4/projects/{id}/run-pipeline", "Kích hoạt thực thi toàn bộ đồ thị Node Canvas từ Input đến Xuất bản"],
+              ["Flow Graph", "GET", "/api/v4/projects/{id}/canvas-graph", "Tải trạng thái tọa độ các node và dây nối trên Canvas"],
+              ["Flow Graph", "PUT", "/api/v4/projects/{id}/canvas-graph", "Lưu trạng thái thay đổi vị trí node và các kết nối dây trên Canvas"]
+            ]
+          }
+        },
+        {
+          "heading": "5.3. Đặc tả chi tiết các Data Payloads trọng tâm (JSON Schemas)",
+          "paragraphs": [
+            "Dưới đây là cấu trúc dữ liệu chi tiết cho các thao tác quan trọng nhất của hệ thống:"
+          ],
+          "subsections": [
+            {
+              "heading": "Payload 1: Kích hoạt Pipeline tổng thể (Run Full Pipeline Request)",
+              "paragraphs": [
+                "Endpoint: `POST /api/v4/projects/{project_id}/run-pipeline`"
+              ],
+              "code_block": "{\n  \"project_id\": \"proj-wintop-2026-trungthu\",\n  \"canvas_graph_id\": \"graph-canvas-v4-01\",\n  \"execution_scope\": \"ALL_NODES\",\n  \"pipeline_parameters\": {\n    \"auto_scene_parsing\": true,\n    \"target_scenes\": [1, 2, 3, 4, 5],\n    \"safe_zone_rule\": \"RULE_THIRDS_GOLDEN_RATIO\",\n    \"face_consistency_threshold\": 0.95,\n    \"output_resolutions\": [\"4K\"],\n    \"export_ratios\": [\"1:1\", \"9:16\", \"16:9\"],\n    \"generate_layered_psd\": true\n  }\n}"
+            },
+            {
+              "heading": "Payload 2: Phản hồi kết quả Pipeline hoàn thành (Pipeline Execution Response)",
+              "paragraphs": [
+                "HTTP Status: `200 OK`"
+              ],
+              "code_block": "{\n  \"status\": \"SUCCESS\",\n  \"job_id\": \"flow-job-20260912-9988\",\n  \"total_duration_seconds\": 26.4,\n  \"scenes_output\": [\n    {\n      \"scene_id\": \"sc-01-phongtro\",\n      \"scene_number\": 1,\n      \"cinematic_prompt_en\": \"A tired Vietnamese female worker in a modest rental room looking tenderly at a glowing phone screen...\",\n      \"audit_results\": {\n        \"face_consistency_score\": 0.98,\n        \"safe_zone_alignment\": \"PASSED_RIGHT_THIRD\",\n        \"anatomical_defect_detected\": false,\n        \"brand_logo_integrity\": \"100%_INTACT\"\n      },\n      \"delivered_assets\": {\n        \"ratio_1x1_url\": \"gs://wintop-ai-media-vault/campaigns/sc_01_1x1_4k.png\",\n        \"ratio_9x16_url\": \"gs://wintop-ai-media-vault/campaigns/sc_01_9x16_story.png\",\n        \"ratio_16x9_url\": \"gs://wintop-ai-media-vault/campaigns/sc_01_16x9_banner.png\",\n        \"layered_psd_url\": \"gs://wintop-ai-media-vault/campaigns/sc_01_master_4layers.psd\"\n      }\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "heading": "5.4. Kênh giao tiếp thời gian thực WebSocket (Realtime Progress Streaming)",
+          "paragraphs": [
+            "Để cập nhật trạng thái viền phát sáng và thanh tiến độ % của từng Node trên Google Flow Canvas mà không cần Polling liên tục, hệ thống duy trì kênh WebSocket:",
+            "• URL Kênh: `wss://api.wintop.flow.google.com/ws/progress/{project_id}`",
+            "• Cấu trúc bản tin sự kiện Broadcast từ Backend về Google Flow Canvas:"
+          ],
+          "code_block": "{\n  \"event_type\": \"NODE_EXECUTION_PROGRESS\",\n  \"project_id\": \"proj-wintop-2026-trungthu\",\n  \"node_id\": \"node-synthesis-003\",\n  \"node_type\": \"synthesis_audit\",\n  \"current_scene_number\": 2,\n  \"stage_label\": \"INPAINTING_WINTOP_CAN_AND_SHADOWS\",\n  \"progress_percentage\": 78,\n  \"temporary_preview_url\": \"https://storage.googleapis.com/wintop-temp-preview/sc2_step78.jpg\",\n  \"live_audit_metrics\": {\n    \"face_lock_status\": \"LOCKED\",\n    \"safe_zone_conflict\": false\n  },\n  \"timestamp\": \"2026-09-12T11:20:00Z\"\n}"
+        }
+      ]
+    },
+    {
+      "id": "sec6",
+      "heading": "PHẦN 6: BẢO MẬT, TRIỂN KHAI & TIÊU CHUẨN NGHIỆM THU (ACCEPTANCE CRITERIA)",
+      "subsections": [
+        {
+          "heading": "6.1. Quy chuẩn An toàn Dữ liệu Doanh nghiệp (Enterprise Data Governance)",
+          "paragraphs": [
+            "Để bảo vệ tuyệt đối bí mật chiến dịch truyền thông và tài sản thương hiệu của Sữa Wintop, hệ thống áp dụng các rào cản bảo mật nghiêm ngặt nhất của Google Cloud:",
+            "• Google Cloud VPC Service Controls: Toàn bộ lưu lượng truyền tải giữa Google Flow Canvas Extension, Cloud Run Microservices và Storage Bucket được giới hạn trong chu vi dịch vụ nội bộ ảo (Virtual Private Perimeter), chặn đứng hoàn toàn nguy cơ rò rỉ dữ liệu ra Internet công cộng.",
+            "• Thỏa thuận Không tái huấn luyện AI (Zero AI Training Retention): Cam kết thông qua Vertex AI Enterprise Agreement rằng toàn bộ kịch bản, hình ảnh gia đình người tiêu dùng và tư liệu sản phẩm Wintop tải lên sẽ không bị Google lưu trữ để huấn luyện các phiên bản mô hình AI công cộng tiếp theo.",
+            "• Quản lý Quyền truy cập theo vai trò (Role-Based Access Control - RBAC): Phân định 3 nhóm quyền rõ ràng: Creative Marketer (Chỉ được nhập kịch bản và xem kết quả), Designer / Media Buyer (Được tải file PSD tách lớp và đổi tỷ lệ), và System Administrator (Cấu hình hạn mức Quota và quản trị API)."
+          ]
+        },
+        {
+          "heading": "6.2. Ma trận tiêu chuẩn nghiệm thu kỹ thuật định lượng (Acceptance Criteria v4.0)",
+          "paragraphs": [
+            "Hệ thống chỉ được bàn giao nghiệm thu đưa vào vận hành sản xuất chính thức khi đạt 100% các tiêu chuẩn định lượng dưới đây:"
+          ],
+          "table": {
+            "headers": ["Mã kiểm thử", "Hạng mục kiểm định", "Tiêu chuẩn nghiệm thu định lượng (Pass Criteria)", "Phương pháp đo lường"],
+            "rows": [
+              [
+                "AC-01",
+                "Trải nghiệm Canvas kéo thả",
+                "Thao tác kéo thả các Node, di chuyển và nối dây đạt chuẩn 60 FPS, không có độ trễ giật khung hình; tự động chặn các dây nối sai kiểu dữ liệu.",
+                "Thao tác trực tiếp trên Google Flow Studio với đồ thị 20 phân cảnh đồng thời."
+              ],
+              [
+                "AC-02",
+                "Tốc độ bóc tách kịch bản",
+                "Gemini Pro bóc tách kịch bản Trung Thu 10 cảnh hoàn thành dưới 5 giây; sinh prompt tiếng Anh chính xác với bối cảnh sữa Wintop.",
+                "Tải file 'Kich ban Trung Thu Wintop V3.xlsx' và kiểm tra mảng Scene Card sinh ra."
+              ],
+              [
+                "AC-03",
+                "Độ đồng nhất khuôn mặt (Face Consistency)",
+                "Chỉ số tương đồng khuôn mặt (Cosine Similarity) giữa nhân vật trong ảnh sinh ra và ảnh mẫu ở Slot Character đạt tối thiểu >= 95%.",
+                "Chạy thuật toán so khớp FaceNet / InsightFace trên toàn bộ chuỗi phân cảnh."
+              ],
+              [
+                "AC-04",
+                "Định vị Safe Zone 1/3",
+                "Lon sữa Wintop và Mascot được đặt chính xác tại 1/3 trái hoặc phải; 0% trường hợp che đè lên khuôn mặt nhân vật chính.",
+                "Quét tự động tỷ lệ giao cắt (Intersection over Union - IoU) giữa Bounding Box sản phẩm và mặt người."
+              ],
+              [
+                "AC-05",
+                "Độ phân giải & Chất lượng",
+                "Hình ảnh xuất bản đạt độ phân giải tối thiểu 4K (3840x2160), sắc nét từng hạt chi tiết, chữ trên nhãn lon sữa rõ ràng không méo biến dạng.",
+                "Phóng to 400% kiểm tra mật độ điểm ảnh và độ sắc viền của logo Wintop."
+              ],
+              [
+                "AC-06",
+                "Chất lượng phân tách Layer PSD",
+                "File .PSD mở trên Adobe Photoshop hiển thị đủ 4 layer độc lập (Text, Product/Mascot, Character, Clean Background) có phông trong suốt chuẩn.",
+                "Mở file PSD bằng Adobe Photoshop CC 2026 và kiểm tra cấu trúc Layer Tree."
+              ],
+              [
+                "AC-07",
+                "Thời gian hoàn thành tác vụ (E2E Latency)",
+                "Toàn bộ chu kỳ từ khâu nhấn 'Run Pipeline' đến khi có đủ 3 kích thước ảnh 4K và file PSD hoàn tất dưới 30 giây cho mỗi phân cảnh.",
+                "Đo lường thời gian đáp ứng hệ thống (End-to-end Processing Time) trên Cloud Logging."
+              ]
+            ]
+          }
+        },
+        {
+          "heading": "6.3. Kế hoạch lộ trình triển khai 8 tuần (Implementation Roadmap)",
+          "paragraphs": [
+            "Dự án được phân chia thành 5 mốc tiến độ (Milestones) trong vòng 8 tuần làm việc:",
+            "• Tuần 1 - Tuần 2 (Sprint 1): Xây dựng bộ Custom Node Components trên Google Flow SDK; hoàn thiện giao diện Canvas kéo thả, Wire connections và State Machine.",
+            "• Tuần 3 - Tuần 4 (Sprint 2): Triển khai Vertex AI Pipelines, xây dựng worker bóc tách kịch bản bằng Gemini Pro và worker sinh ảnh nền tảng với Imagen 3.",
+            "• Tuần 5 - Tuần 6 (Sprint 3): Tinh chỉnh mô hình IP-Adapter Face Consistency; tích hợp worker inpainting Safe Zone 1/3 và SAM PSD Multi-layer splitter.",
+            "• Tuần 7 (Sprint 4): Thiết lập hệ thống cơ sở dữ liệu Cloud Firestore, GCS Bucket, kênh WebSocket streaming và hoàn thiện 15+ RESTful APIs.",
+            "• Tuần 8 (Sprint 5): Kiểm thử tải (Load Testing), đánh giá chất lượng mỹ thuật theo tiêu chuẩn Brand Guideline của Wintop và bàn giao vận hành cho đội ngũ Marketing."
+          ]
+        }
+      ]
+    }
+  ]
+}

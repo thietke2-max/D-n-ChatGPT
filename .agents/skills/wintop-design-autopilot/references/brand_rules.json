@@ -1,0 +1,46 @@
+{
+  "brand_name": "Wintop",
+  "product_lines": [
+    "Wintop Colostrum Gain",
+    "Wintop Baby"
+  ],
+  "color_palette": {
+    "primary_blue": "#00529B",
+    "accent_gold": "#F5A623",
+    "neutral_dark": "#121621",
+    "light_gray": "#F8FAFC"
+  },
+  "asset_slots": {
+    "slot_character": {
+      "description": "Ảnh chân dung / toàn thân nhân vật mẫu (Mẹ công nhân, Bé gái, Bà...)",
+      "requirement": "Khóa Face ID, biểu cảm tự nhiên, ánh sáng đồng nhất"
+    },
+    "slot_product": {
+      "description": "Packshot Lon Wintop Colostrum Gain 400g/800g hoặc Vỉ sữa pha sẵn",
+      "requirement": "File PNG nền trong suốt, nhãn sắc nét, không bị biến dạng tỷ lệ"
+    },
+    "slot_mascot": {
+      "description": "Mascot Hươu cao cổ siêu nhân chuẩn nhận diện Wintop",
+      "requirement": "File PNG trong suốt, dáng vẻ năng động, thân thiện"
+    }
+  },
+  "composition_and_safe_zone": {
+    "rule_of_thirds": "Sản phẩm và Mascot bắt buộc đặt ở 1/3 bên phải hoặc 1/3 góc dưới để không che mặt nhân vật",
+    "rim_light_and_shadow": "Bắt buộc đồng bộ nguồn sáng môi trường hắt lên lon sữa và bóng tiếp xúc (contact shadow) trên mặt phẳng",
+    "aspect_ratios": {
+      "1:1": "1080x1080px (Facebook Feed / Instagram Square)",
+      "9:16": "1080x1920px (TikTok / Reels / Stories)",
+      "16:9": "1920x1080px (Youtube / TVC / Cinematic banner)"
+    }
+  },
+  "domain_keywords": [
+    "Sữa non Mỹ",
+    "HMO",
+    "Chiết xuất tổ yến",
+    "Canxi nano",
+    "Mascot Hươu siêu nhân",
+    "Đèn ông sao Trung Thu",
+    "Tăng cân chuẩn khoa học"
+  ],
+  "prompt_cinematic_template": "[Subject & Action] + [Environment & Mood] + [Brand Asset Integration: Wintop Colostrum Can / Mascot] + [Camera Angle & Lighting] + [Style & Quality: photorealistic, 4k, 35mm f/1.8, cinematic lighting]"
+}

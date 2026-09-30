@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="100%" height="100%">
+  <defs>
+    <style>
+      .lane-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; fill: #FFFFFF; text-anchor: middle; }
+      .node-rect { rx: 8; stroke-width: 1.5; }
+      .node-text { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; text-anchor: middle; }
+      .node-sub { font-family: 'Inter', sans-serif; font-size: 9px; fill: #64748B; text-anchor: middle; }
+      .decision { stroke: #D97706; stroke-width: 2; fill: #FEF3C7; }
+      .arrow { stroke: #475569; stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+      .arrow-accent { stroke: #00529B; stroke-width: 2; fill: none; marker-end: url(#arrowhead-blue); }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#475569" />
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#00529B" />
+    </marker>
+  </defs>
+
+  <rect width="1000" height="680" fill="#FFFFFF" rx="12"/>
+
+  <!-- Swimlane Headers -->
+  <!-- Lane 1: Visual Designer -->
+  <rect x="40" y="30" width="220" height="40" fill="#00529B" rx="4"/>
+  <text x="150" y="55" class="lane-title">1. VISUAL DESIGNER</text>
+  <rect x="40" y="70" width="220" height="580" fill="#F8FAFC" stroke="#E2E8F0"/>
+
+  <!-- Lane 2: Creative Director -->
+  <rect x="260" y="30" width="220" height="40" fill="#0369A1" rx="4"/>
+  <text x="370" y="55" class="lane-title">2. CREATIVE DIRECTOR</text>
+  <rect x="260" y="70" width="220" height="580" fill="#F0F9FF" stroke="#E2E8F0"/>
+
+  <!-- Lane 3: Antigravity Autopilot -->
+  <rect x="480" y="30" width="260" height="40" fill="#0F172A" rx="4"/>
+  <text x="610" y="55" class="lane-title">3. ANTIGRAVITY ENGINE</text>
+  <rect x="480" y="70" width="260" height="580" fill="#F8FAFC" stroke="#E2E8F0"/>
+
+  <!-- Lane 4: ChatGPT / OpenAI -->
+  <rect x="740" y="30" width="220" height="40" fill="#10B981" rx="4"/>
+  <text x="850" y="55" class="lane-title">4. CHATGPT / DALL-E 3</text>
+  <rect x="740" y="70" width="220" height="580" fill="#ECFDF5" stroke="#E2E8F0"/>
+
+  <!-- Step 1: Start (Designer) -->
+  <circle cx="150" cy="110" r="14" fill="#00529B"/>
+  <rect x="70" y="140" width="160" height="45" fill="#FFFFFF" stroke="#00529B" class="node-rect"/>
+  <text x="150" y="160" class="node-text" fill="#00529B">Nạp Brief Đề Bài</text>
+  <text x="150" y="174" class="node-sub">&amp; 3 Slot Assets (Ảnh Mẫu)</text>
+
+  <!-- Flow to Engine -->
+  <path d="M 230 162 L 510 162" class="arrow-accent"/>
+
+  <!-- Step 2: Synthesis in Engine -->
+  <rect x="510" y="140" width="200" height="50" fill="#FFFFFF" stroke="#0F172A" class="node-rect"/>
+  <text x="610" y="162" class="node-text" fill="#0F172A">Bóc Tách Scene Stacks</text>
+  <text x="610" y="177" class="node-sub">Prompt điện ảnh + Safe Zone 1/3</text>
+
+  <!-- Flow to Creative Director Checkpoint -->
+  <path d="M 510 170 L 370 230" class="arrow"/>
+
+  <!-- Step 3: Checkpoint in CD Lane -->
+  <polygon points="370,240 430,275 370,310 310,275" class="decision"/>
+  <text x="370" y="278" font-family="Inter" font-size="10" font-weight="700" fill="#92400E" text-anchor="middle">Duyệt Kịch Bản?</text>
+
+  <!-- No Branch -> Back to Designer to edit -->
+  <path d="M 310 275 L 150 275 L 150 185" class="arrow"/>
+  <text x="210" y="265" font-family="Inter" font-size="10" font-weight="700" fill="#DC2626">Sửa Prompt [NO]</text>
+
+  <!-- Yes Branch -> Go to Engine Design Mode -->
+  <path d="M 370 310 L 370 340 L 610 340" class="arrow-accent"/>
+  <text x="400" y="330" font-family="Inter" font-size="10" font-weight="700" fill="#16A34A">Đồng Ý [YES]</text>
+
+  <!-- Step 4: Engine launches Browser Automation -->
+  <rect x="510" y="355" width="200" height="50" fill="#FFFFFF" stroke="#00529B" class="node-rect"/>
+  <text x="610" y="377" class="node-text" fill="#00529B">Kết Nối Trình Duyệt Chrome</text>
+  <text x="610" y="392" class="node-sub">CDP Port 9222 / User Session</text>
+
+  <!-- Flow to ChatGPT Lane -->
+  <path d="M 710 380 L 760 380" class="arrow-accent"/>
+
+  <!-- Step 5: ChatGPT Generates Image -->
+  <rect x="760" y="355" width="180" height="50" fill="#FFFFFF" stroke="#10B981" class="node-rect"/>
+  <text x="850" y="377" class="node-text" fill="#047857">Nhận Prompt &amp; Sinh Ảnh</text>
+  <text x="850" y="392" class="node-sub">DALL-E 3 Render (&lt;= 90s)</text>
+
+  <!-- Flow back to Engine to download -->
+  <path d="M 850 405 L 850 465 L 710 465" class="arrow-accent"/>
+
+  <!-- Step 6: Engine Downloads and Audits -->
+  <rect x="510" y="440" width="200" height="55" fill="#FFFFFF" stroke="#0F172A" class="node-rect"/>
+  <text x="610" y="460" class="node-text" fill="#0F172A">Tải &amp; Lưu Vào outputs/</text>
+  <text x="610" y="475" class="node-sub">Đổi tên scene_XX.png + Audit Safe Zone</text>
+  <text x="610" y="488" class="node-sub">Ghi scenes_manifest.json</text>
+
+  <!-- Check if more scenes -->
+  <polygon points="610,520 660,550 610,580 560,550" class="decision"/>
+  <text x="610" y="553" font-family="Inter" font-size="9" font-weight="700" fill="#92400E" text-anchor="middle">Còn Cảnh?</text>
+
+  <!-- Loop back to Step 4 if more scenes -->
+  <path d="M 660 550 L 910 550 L 910 330 L 610 330 L 610 355" class="arrow"/>
+  <text x="780" y="540" font-family="Inter" font-size="10" font-weight="700" fill="#2563EB">Tiếp tục cảnh [YES]</text>
+
+  <!-- No more scenes -> Final step -->
+  <path d="M 610 580 L 610 610 L 230 610" class="arrow-accent"/>
+  <text x="450" y="600" font-family="Inter" font-size="10" font-weight="700" fill="#16A34A">Hết cảnh [NO]</text>
+
+  <!-- Final Step: Storyboard Dashboard Published -->
+  <rect x="70" y="585" width="160" height="50" fill="#10B981" class="node-rect"/>
+  <text x="150" y="607" class="node-text" fill="#FFFFFF">Xuất Storyboard Dashboard</text>
+  <text x="150" y="622" font-family="Inter" font-size="9" fill="#ECFDF5" text-anchor="middle">Bàn giao Media Buyer &amp; Team</text>
+</svg>

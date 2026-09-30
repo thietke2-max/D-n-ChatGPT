@@ -1,0 +1,30 @@
+﻿{
+    "scenes":  [
+                   {
+                       "id":  1,
+                       "imageUrl":  "outputs/anh_da_tao/scene_01_tan_ca_cung_chi_em.png",
+                       "prompt":  "Cinematic emotional shot of a 30-year-old Vietnamese female factory worker with a gentle, hardworking face, wearing a simple dusty-blue worker uniform, walking out of an industrial factory gate at dusk. Coworkers waving goodbye at the crossroads in the background as she walks alone with a small plastic bag towards a roadside vegetable stand.",
+                       "safe_zone":  "Right-Third",
+                       "ratio":  "1:1",
+                       "title":  "Scene 01: Tan ca cÃ¹ng chá»‹ em",
+                       "char":  "Máº¹ cÃ´ng nhÃ¢n"
+                   },
+                   {
+                       "id":  2,
+                       "imageUrl":  "outputs/anh_da_tao/scene_02_can_phong_7_gio_toi.png",
+                       "prompt":  "Cinematic emotional shot from inside a modest, humble Vietnamese rented room as the 30-year-old female factory worker with a gentle, tired face in a dusty-blue worker uniform opens the door and steps in. On the wall, a simple round clock clearly shows 19:00. Soft warm incandescent indoor tungsten lamp light illuminates the quiet small room.",
+                       "safe_zone":  "Right-Third",
+                       "ratio":  "1:1",
+                       "title":  "Scene 02: CÄƒn phÃ²ng 7 giá» tá»‘i",
+                       "char":  "Máº¹ cÃ´ng nhÃ¢n"
+                   }
+               ],
+    "brand":  "WINTOP COLOSTRUM GAIN",
+    "campaignTitle":  "Chiáº¿n Dá»‹ch Trung Thu Wintop V3 - Miá»n Báº¯c",
+    "stats":  {
+                  "totalScenes":  2,
+                  "renderedCount":  2,
+                  "safeZoneScore":  "100%"
+              },
+    "createdAt":  "22/09/2026 17:00"
+}

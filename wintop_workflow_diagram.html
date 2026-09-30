@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wintop AI Design Autopilot - Archify Workflow & Human Gate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas: #090D16;
+      --bg-panel: #111827;
+      --card-bg: #1A2234;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --primary: #00529B;
+      --primary-light: #38BDF8;
+      --accent: #F5A623;
+      --success: #10B981;
+      --human-gate: #EF4444;
+      --human-gate-glow: rgba(239, 68, 68, 0.4);
+      --human-gate-bg: rgba(239, 68, 68, 0.12);
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-canvas: #F8FAFC;
+      --bg-panel: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --card-border: #E2E8F0;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --primary: #00529B;
+      --primary-light: #0284C7;
+      --accent: #D97706;
+      --success: #059669;
+      --human-gate: #DC2626;
+      --human-gate-glow: rgba(220, 38, 38, 0.25);
+      --human-gate-bg: rgba(254, 226, 226, 0.7);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* Top Navigation Toolbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 32px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-archify {
+      background: linear-gradient(135deg, var(--primary), #00284D);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 0 12px rgba(0, 82, 155, 0.35);
+    }
+
+    .title-text {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-theme {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-theme:hover {
+      border-color: var(--primary-light);
+    }
+
+    /* Main Stage */
+    .viewport-container {
+      flex: 1;
+      padding: 36px 32px 60px 32px;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .header-desc {
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-desc h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .header-desc p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* SVG Interactive Canvas Box */
+    .canvas-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Legend Box */
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .legend-item {
+      background: var(--bg-panel);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .legend-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .legend-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .legend-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Pulsing Animation for Human Gate */
+    @keyframes pulseRedGlow {
+      0% {
+        stroke: #EF4444;
+        filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.5));
+      }
+      50% {
+        stroke: #FF6B6B;
+        filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.9));
+      }
+      100% {
+        stroke: #EF4444;
+        filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.5));
+      }
+    }
+
+    .human-gate-pulse {
+      animation: pulseRedGlow 2.5s infinite ease-in-out;
+    }
+
+    .pulse-badge {
+      animation: badgePulse 2s infinite ease-in-out;
+    }
+
+    @keyframes badgePulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand-title">
+      <span class="badge-archify">ARCHIFY v2.17</span>
+      <span class="title-text">Wintop AI • Visual Workflow Engine</span>
+    </div>
+    <div class="controls">
+      <button class="btn-theme" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+        <span id="theme-text">Chuyển Light Mode</span>
+      </button>
+      <button class="btn-theme" onclick="window.print()">
+        <span>🖨️</span>
+        <span>In Sơ Đồ (PDF)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="viewport-container">
+    <div class="header-desc">
+      <div>
+        <h1>SƠ ĐỒ LUỒNG THỰC THI KHÉP KÍN (WORKFLOW ARCHITECTURE)</h1>
+        <p>Quy trình tự động hóa bóc tách kịch bản, trạm dừng phê duyệt Human Gate và điều phối tạo ảnh</p>
+      </div>
+      <div style="text-align: right;">
+        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--human-gate); background: var(--human-gate-bg); border: 1px solid var(--human-gate); padding: 6px 14px; border-radius: 8px;">
+          🛑 HUMAN APPROVAL GATE: ĐƯỢC TÔ ĐỎ ĐẶC TRƯNG
+        </span>
+      </div>
+    </div>
+
+    <!-- Canvas Card with SVG -->
+    <div class="canvas-card">
+      <svg viewBox="0 0 1340 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00529B" />
+            <stop offset="100%" stop-color="#003366" />
+          </linearGradient>
+
+          <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F5A623" />
+            <stop offset="100%" stop-color="#D97706" />
+          </linearGradient>
+
+          <linearGradient id="gateRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#EF4444" />
+            <stop offset="100%" stop-color="#991B1B" />
+          </linearGradient>
+
+          <filter id="gateGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+
+          <!-- Markers -->
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748B" />
+          </marker>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#38BDF8" />
+          </marker>
+          <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#EF4444" />
+          </marker>
+          <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#10B981" />
+          </marker>
+        </defs>
+
+        <!-- Background Container Rails -->
+        <!-- Stage 1 Rail -->
+        <rect x="40" y="50" width="360" height="660" rx="14" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" />
+        <text x="60" y="85" font-family="Inter" font-size="13" font-weight="800" fill="#38BDF8" letter-spacing="1">STAGE 1: INPUT &amp; STORYBOARD SYNTHESIS</text>
+
+        <!-- Stage 2: HUMAN GATE RAIL (TÔ ĐỎ RÕ RÀNG) -->
+        <rect x="440" y="50" width="460" height="660" rx="16" fill="rgba(239, 68, 68, 0.04)" stroke="#EF4444" stroke-width="2" stroke-dasharray="6 4" />
+        <rect x="460" y="65" width="280" height="28" rx="6" fill="#EF4444" />
+        <text x="600" y="84" font-family="Inter" font-size="12" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">STAGE 2: 🛑 HUMAN-IN-THE-LOOP APPROVAL</text>
+
+        <!-- Stage 3 Rail -->
+        <rect x="940" y="50" width="360" height="660" rx="14" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" />
+        <text x="960" y="85" font-family="Inter" font-size="13" font-weight="800" fill="#10B981" letter-spacing="1">STAGE 3: DESIGN ENGINE &amp; PACKAGING</text>
+
+
+        <!-- NODE 1: Ingestion -->
+        <g transform="translate(60, 120)">
+          <rect width="320" height="120" rx="12" fill="#162032" stroke="#00529B" stroke-width="1.5" />
+          <rect x="16" y="14" width="80" height="22" rx="4" fill="#00529B" />
+          <text x="56" y="29" font-family="Inter" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">NODE 01</text>
+          <text x="108" y="30" font-family="Inter" font-size="14" font-weight="700" fill="#F8FAFC">Brief &amp; 3 Slot Assets</text>
+          
+          <text x="18" y="64" font-family="Inter" font-size="12" fill="#94A3B8">• Slot 1: Chân dung nhân vật (Mẹ / Bé)</text>
+          <text x="18" y="86" font-family="Inter" font-size="12" fill="#94A3B8">• Slot 2: Packshot Lon Sữa Colostrum</text>
+          <text x="18" y="108" font-family="Inter" font-size="12" fill="#94A3B8">• Slot 3: Mascot Hươu cao cổ siêu nhân</text>
+        </g>
+
+        <!-- Edge 1 -> 2 -->
+        <path d="M 220 240 L 220 280" stroke="#38BDF8" stroke-width="2" marker-end="url(#arrow-blue)" />
+
+        <!-- NODE 2: Scene Stack Engine -->
+        <g transform="translate(60, 280)">
+          <rect width="320" height="135" rx="12" fill="#162032" stroke="#38BDF8" stroke-width="1.5" />
+          <rect x="16" y="14" width="80" height="22" rx="4" fill="#0284C7" />
+          <text x="56" y="29" font-family="Inter" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">NODE 02</text>
+          <text x="108" y="30" font-family="Inter" font-size="14" font-weight="700" fill="#F8FAFC">Scene Stacks Builder</text>
+          
+          <text x="18" y="64" font-family="Inter" font-size="12" fill="#94A3B8">• Bóc tách N phân cảnh kịch bản</text>
+          <text x="18" y="86" font-family="Inter" font-size="12" fill="#94A3B8">• Sinh Cinematic Prompt (35mm f/1.8)</text>
+          <text x="18" y="108" font-family="Inter" font-size="12" fill="#94A3B8">• Quy hoạch Safe Zone 1/3 (Phải/Dưới)</text>
+        </g>
+
+        <!-- Edge 2 -> HUMAN GATE (ĐI SANG VÙNG ĐỎ) -->
+        <path d="M 380 345 L 480 345" stroke="#EF4444" stroke-width="2.5" marker-end="url(#arrow-red)" />
+        <text x="430" y="335" font-family="Inter" font-size="11" font-weight="700" fill="#EF4444" text-anchor="middle">Chuyển duyệt</text>
+
+
+        <!-- ========================================================================= -->
+        <!-- 🛑 HUMAN GATE: TÔ ĐỎ RỰC RỠ, NỔI BẬT NHẤT TOÀN BỘ SƠ ĐỒ                  -->
+        <!-- ========================================================================= -->
+        <g transform="translate(480, 190)" class="human-gate-pulse">
+          <!-- Outer glowing red card -->
+          <rect width="380" height="310" rx="16" fill="rgba(220, 38, 38, 0.15)" stroke="#EF4444" stroke-width="3" />
+          
+          <!-- Header Banner -->
+          <rect x="0" y="0" width="380" height="48" rx="16" fill="#DC2626" />
+          <text x="190" y="30" font-family="Inter" font-size="14" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">🛑 HUMAN APPROVAL GATE (TRẠM DUYỆT)</text>
+
+          <!-- Subtitle / Persona -->
+          <text x="190" y="78" font-family="Inter" font-size="13" font-weight="700" fill="#FCA5A5" text-anchor="middle">Người phê duyệt: Creative Director / Art Director</text>
+          <line x1="30" y1="92" x2="350" y2="92" stroke="rgba(239,68,68,0.3)" stroke-width="1" />
+
+          <!-- Checklist Items -->
+          <text x="36" y="122" font-family="Inter" font-size="12" font-weight="600" fill="#FFFFFF">1. Soi Prompt &amp; Cảm xúc từng phân cảnh</text>
+          <text x="36" y="146" font-family="Inter" font-size="12" font-weight="600" fill="#FFFFFF">2. Kiểm tra Safe Zone 1/3 (Không che mặt người)</text>
+          <text x="36" y="170" font-family="Inter" font-size="12" font-weight="600" fill="#FFFFFF">3. Khóa đúng mã màu brand (#00529B &amp; #F5A623)</text>
+          <text x="36" y="194" font-family="Inter" font-size="12" font-weight="600" fill="#FFFFFF">4. Kiểm tra trang phục &amp; đặc điểm nhân vật</text>
+
+          <!-- Decision Diamond Representation -->
+          <g transform="translate(190, 250)">
+            <rect x="-140" y="-22" width="280" height="44" rx="8" fill="#991B1B" stroke="#F87171" stroke-width="1.5" />
+            <text x="0" y="5" font-family="Inter" font-size="12" font-weight="800" fill="#FFFFFF" text-anchor="middle">QUYẾT ĐỊNH CỦA NGƯỜI DUYỆT</text>
+          </g>
+        </g>
+
+        <!-- REJECT / EDIT BRANCH (MŨI TÊN QUAY LẠI TÔ ĐỎ) -->
+        <path d="M 480 440 L 220 440 L 220 415" stroke="#EF4444" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrow-red)" />
+        <rect x="290" y="425" width="130" height="26" rx="4" fill="#7F1D1D" stroke="#EF4444" />
+        <text x="355" y="442" font-family="Inter" font-size="11" font-weight="700" fill="#FCA5A5" text-anchor="middle">❌ CHỈNH SỬA LẠI</text>
+
+        <!-- APPROVE BRANCH (MŨI TÊN CHẤP THUẬN TÔ XANH SANG STAGE 3) -->
+        <path d="M 860 345 L 980 345" stroke="#10B981" stroke-width="3" marker-end="url(#arrow-green)" />
+        <rect x="880" y="325" width="80" height="26" rx="4" fill="#065F46" stroke="#10B981" />
+        <text x="920" y="342" font-family="Inter" font-size="11" font-weight="800" fill="#A7F3D0" text-anchor="middle">✓ DUYỆT</text>
+
+
+        <!-- ========================================================================= -->
+        <!-- STAGE 3: DESIGN ENGINE & BROWSER AUTOMATION                                -->
+        <!-- ========================================================================= -->
+
+        <!-- NODE 03: Browser Automation Bridge -->
+        <g transform="translate(980, 120)">
+          <rect width="300" height="120" rx="12" fill="#162032" stroke="#10B981" stroke-width="1.5" />
+          <rect x="16" y="14" width="80" height="22" rx="4" fill="#047857" />
+          <text x="56" y="29" font-family="Inter" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">NODE 03</text>
+          <text x="108" y="30" font-family="Inter" font-size="14" font-weight="700" fill="#F8FAFC">Browser GPT Bridge</text>
+          
+          <text x="18" y="64" font-family="Inter" font-size="12" fill="#94A3B8">• Kết nối Chrome (Port 9222)</text>
+          <text x="18" y="86" font-family="Inter" font-size="12" fill="#94A3B8">• Nạp prompt từng cảnh vào GPT</text>
+          <text x="18" y="108" font-family="Inter" font-size="12" fill="#94A3B8">• Chờ DALL-E 3 render (&lt;= 90s)</text>
+        </g>
+
+        <!-- Edge from Node 3 -> Node 4 -->
+        <path d="M 1130 240 L 1130 280" stroke="#10B981" stroke-width="2" marker-end="url(#arrow-green)" />
+
+        <!-- NODE 04: Auto-Download & Storage -->
+        <g transform="translate(980, 280)">
+          <rect width="300" height="135" rx="12" fill="#162032" stroke="#10B981" stroke-width="1.5" />
+          <rect x="16" y="14" width="80" height="22" rx="4" fill="#047857" />
+          <text x="56" y="29" font-family="Inter" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">NODE 04</text>
+          <text x="108" y="30" font-family="Inter" font-size="14" font-weight="700" fill="#F8FAFC">Download &amp; Audit</text>
+          
+          <text x="18" y="64" font-family="Inter" font-size="12" fill="#94A3B8">• Lưu outputs/anh_da_tao/ (4K)</text>
+          <text x="18" y="86" font-family="Inter" font-size="12" fill="#94A3B8">• Đổi tên scene_XX_slug.png</text>
+          <text x="18" y="108" font-family="Inter" font-size="12" fill="#94A3B8">• Ghi vết scenes_manifest.json</text>
+        </g>
+
+        <!-- Edge from Node 4 -> Node 5 -->
+        <path d="M 1130 415 L 1130 460" stroke="#10B981" stroke-width="2" marker-end="url(#arrow-green)" />
+
+        <!-- NODE 05: Packaging & Dashboard -->
+        <g transform="translate(980, 460)">
+          <rect width="300" height="120" rx="12" fill="#162032" stroke="#F5A623" stroke-width="2" />
+          <rect x="16" y="14" width="80" height="22" rx="4" fill="#D97706" />
+          <text x="56" y="29" font-family="Inter" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">NODE 05</text>
+          <text x="108" y="30" font-family="Inter" font-size="14" font-weight="700" fill="#F8FAFC">Storyboard Dashboard</text>
+          
+          <text x="18" y="64" font-family="Inter" font-size="12" fill="#94A3B8">• Trang HTML Storyboard tương tác</text>
+          <text x="18" y="86" font-family="Inter" font-size="12" fill="#94A3B8">• Đóng gói 3 tỉ lệ (1:1, 9:16, 16:9)</text>
+          <text x="18" y="108" font-family="Inter" font-size="12" fill="#94A3B8">• Bàn giao Media Buyer chạy Ads</text>
+        </g>
+
+        <!-- Continuous Learning Feedback Loop (Bottom Rail) -->
+        <path d="M 980 520 L 700 520 L 700 630 L 220 630 L 220 415" stroke="#F5A623" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arrow)" />
+        <rect x="420" y="618" width="220" height="26" rx="6" fill="#162032" stroke="#F5A623" />
+        <text x="530" y="635" font-family="Inter" font-size="11" font-weight="700" fill="#F5A623" text-anchor="middle">🔄 FEEDBACK LOOP: TỰ HỌC HỎI</text>
+
+      </svg>
+    </div>
+
+    <!-- Legend Cards -->
+    <div class="legend-grid">
+      <div class="legend-item" style="border-color: #EF4444; background: rgba(239, 68, 68, 0.05);">
+        <div class="legend-indicator" style="background: #EF4444; box-shadow: 0 0 10px #EF4444;"></div>
+        <div>
+          <div class="legend-title" style="color: #EF4444;">🛑 Human Approval Gate (Tô Đỏ Bắt Buộc)</div>
+          <div class="legend-desc">Trạm dừng bắt buộc của Creative Director. Hệ thống tuyệt đối không sinh ảnh nếu chưa nhận được sự phê duyệt của con người.</div>
+        </div>
+      </div>
+
+      <div class="legend-item">
+        <div class="legend-indicator" style="background: #00529B;"></div>
+        <div>
+          <div class="legend-title">Stage 1: Ingestion &amp; Prompt</div>
+          <div class="legend-desc">Tiếp nhận đề bài chiến dịch và 3 slot ảnh mẫu, tự động phân tích bối cảnh và sinh prompt chuẩn điện ảnh.</div>
+        </div>
+      </div>
+
+      <div class="legend-item">
+        <div class="legend-indicator" style="background: #10B981;"></div>
+        <div>
+          <div class="legend-title">Stage 3: Auto-Pilot &amp; Storage</div>
+          <div class="legend-desc">Điều khiển trình duyệt Chrome kết nối GPT, render ảnh, tự động tải và lưu tập trung vào outputs/anh_da_tao/.</div>
+        </div>
+      </div>
+
+      <div class="legend-item">
+        <div class="legend-indicator" style="background: #F5A623;"></div>
+        <div>
+          <div class="legend-title">Dashboard &amp; Feedback Loop</div>
+          <div class="legend-desc">Xuất bản bảng Storyboard Dashboard tương tác và tự động thu thập góp ý để liên tục nâng cấp tri thức.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      
+      const icon = document.getElementById('theme-icon');
+      const text = document.getElementById('theme-text');
+      if (next === 'light') {
+        icon.innerText = '🌙';
+        text.innerText = 'Chuyển Dark Mode';
+      } else {
+        icon.innerText = '☀️';
+        text.innerText = 'Chuyển Light Mode';
+      }
+    }
+  </script>
+</body>
+</html>

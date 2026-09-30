@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRD: Wintop AI Image Generator & Hybrid Design Autopilot Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'default' });</script>
+  <style>
+    :root {
+      --primary: #00529B;
+      --primary-dark: #003666;
+      --primary-light: #e0f2fe;
+      --accent: #F5A623;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      color: var(--text-main);
+      background-color: var(--bg-page);
+      line-height: 1.65;
+      font-size: 15px;
+      display: flex;
+    }
+    /* Layout */
+    #sidebar {
+      width: 310px;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      padding: 24px 20px;
+      flex-shrink: 0;
+    }
+    #main-content {
+      flex-grow: 1;
+      max-width: 1050px;
+      padding: 40px 48px 100px 48px;
+      margin: 0 auto;
+    }
+    /* Sidebar Brand & Nav */
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .badge-prd {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-item a {
+      display: block;
+      padding: 8px 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+    .nav-item a:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    /* Header Doc */
+    .doc-header {
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .doc-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .meta-tag {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .meta-tag strong { color: var(--text-main); }
+    /* Content Elements */
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 40px 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin: 24px 0 12px 0;
+    }
+    p, ul, ol { margin-bottom: 16px; }
+    ul, ol { padding-left: 24px; }
+    li { margin-bottom: 6px; }
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(245, 166, 35, 0.08);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 18px 0;
+      font-style: italic;
+      color: #78350f;
+    }
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--bg-card);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      font-size: 13.5px;
+    }
+    th, td {
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+    /* Diagram Containers */
+    .diagram-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .diagram-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+    .diagram-caption {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    /* Mermaid styling */
+    .mermaid {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+    }
+    /* Code Box */
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      margin: 16px 0;
+      line-height: 1.5;
+    }
+    code {
+      font-family: var(--font-mono);
+      background: #f1f5f9;
+      color: #0369a1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12.5px;
+    }
+    pre code { background: none; color: inherit; padding: 0; }
+    @media print {
+      #sidebar { display: none; }
+      #main-content { max-width: 100%; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav id="sidebar">
+    <div class="sidebar-brand">
+      <span class="badge-prd">ENTERPRISE PRD</span>
+      <span style="font-weight: 800; color: var(--primary);">WINTOP AI</span>
+    </div>
+    <div class="sidebar-title">Mục Lục Đặc Tả</div>
+    <ul class="nav-list" style="margin-top: 16px;">
+      <li class="nav-item"><a href="#sec1">1. Tóm Tắt Dự Án & Vấn Đề</a></li>
+      <li class="nav-item"><a href="#sec2">2. Chân Dung & Phân Quyền</a></li>
+      <li class="nav-item"><a href="#sec3">3. Phạm Vi P0 / P1 / P2</a></li>
+      <li class="nav-item"><a href="#sec4">4. Kiến Trúc & Sơ Đồ Use Case</a></li>
+      <li class="nav-item"><a href="#sec5">5. Đặc Tả Luồng & Swimlane</a></li>
+      <li class="nav-item"><a href="#sec6">6. Mô Hình Dữ Liệu ERD</a></li>
+      <li class="nav-item"><a href="#sec7">7. Vòng Đời Trạng Thái (State)</a></li>
+      <li class="nav-item"><a href="#sec8">8. Xử Lý Ngoại Lệ & Giới Hạn</a></li>
+      <li class="nav-item"><a href="#sec9">9. An Toàn Thương Hiệu & Audit</a></li>
+      <li class="nav-item"><a href="#sec10">10. Chỉ Số Thành Công & Lộ Trình</a></li>
+      <li class="nav-item"><a href="#sec11">11. Tài Liệu Tham Khảo</a></li>
+    </ul>
+  </nav>
+
+  <main id="main-content">
+    <div class="doc-header">
+      <h1>Wintop AI Image Generator & Hybrid Design Autopilot Platform</h1>
+      <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 12px;">Tài liệu Yêu cầu Sản phẩm Toàn diện (Software PRD) - Chuẩn Enterprise & Agile</p>
+      <div class="meta-bar">
+        <div class="meta-tag">Trạng thái: <strong style="color: #10B981;">Approved</strong></div>
+        <div class="meta-tag">Phiên bản: <strong>V1.0 - Production</strong></div>
+        <div class="meta-tag">Thương hiệu: <strong>Sữa Dinh Dưỡng Wintop</strong></div>
+        <div class="meta-tag">Cập nhật: <strong>19/09/2026</strong></div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <section id="sec1">
+      <h2>1. Executive Summary & Problem Statement</h2>
+      <h3>1.1. Bối cảnh & Điểm nghẽn Thực tế</h3>
+      <p>Thương hiệu Sữa dinh dưỡng <strong>Wintop</strong> (các dòng sản phẩm chiến lược <em>Wintop Colostrum Gain</em> và <em>Wintop Baby</em>) đối mặt với áp lực sản xuất hàng chục Key Visual và phân cảnh quảng cáo phục vụ các chiến dịch lớn (Trung Thu, Tết, Tăng cân chuẩn khoa học). Hiện tại, quy trình thủ công bộc lộ 3 điểm nghẽn nghiêm trọng:</p>
+      <ul>
+        <li><strong>Năng suất chậm chạp</strong>: Mất từ <strong>2 đến 4 tiếng</strong> cho mỗi hình ảnh Key Visual (tìm bối cảnh, ghép nhãn lon, căn chỉnh ánh sáng).</li>
+        <li><strong>Vi phạm Safe Zone & Màu thương hiệu</strong>: Designer thường xuyên đặt lon sữa hoặc Mascot che lấp khuôn mặt nhân vật, hoặc dùng lệch tone màu nhận diện.</li>
+        <li><strong>Mất tính nhất quán nhân vật (Face Inconsistency)</strong>: Khi triển khai chuỗi 10 - 15 phân cảnh, khuôn mặt nhân vật chính (mẹ công nhân, bé gái) bị biến đổi qua từng cảnh, làm giảm độ tin cậy của chiến dịch.</li>
+      </ul>
+      <h3>1.2. Tầm nhìn & Mục tiêu Hệ thống</h3>
+      <p>Hệ thống tự động hóa khép kín kết hợp giữa Antigravity IDE và công cụ AI tạo ảnh trên ChatGPT (DALL-E 3) nhằm đạt 3 mục tiêu cốt lõi: Rút ngắn 85% thời gian (xuống <strong>&lt; 60 giây/ảnh</strong>); đảm bảo <strong>100%</strong> tuân thủ Safe Zone 1/3 và đạt độ tương đồng gương mặt <strong>Face Similarity &gt;= 95%</strong>; tự động lưu trữ ảnh vào <code>outputs/anh_da_tao/</code> và xuất bản trang Storyboard Dashboard trực quan.</p>
+    </section>
+
+    <!-- Section 2 -->
+    <section id="sec2">
+      <h2>2. Target Personas & Permission Matrix (RBAC)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nhóm Vai Trò</th>
+            <th>Trách Nhiệm Chính</th>
+            <th>Nhu Cầu Cốt Lõi</th>
+            <th>Thách Thức Hiện Tại</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Creative Director (CD)</strong></td>
+            <td>Chỉ đạo nghệ thuật, duyệt kịch bản phân cảnh, chốt xuất bản</td>
+            <td>Duyệt nhanh chuỗi cảnh, đảm bảo tính thẩm mỹ và chuẩn Safe Zone</td>
+            <td>Quá tải vì phải duyệt thủ công hàng chục slide kịch bản rời rạc</td>
+          </tr>
+          <tr>
+            <td><strong>Visual Designer / Operator</strong></td>
+            <td>Nạp brief, chuẩn bị 3 slot ảnh mẫu, chạy sinh ảnh, kiểm định lỗi</td>
+            <td>Tự động hóa việc nạp prompt và lưu file, tập trung vào sáng tạo</td>
+            <td>Mất thời gian copy-paste prompt sang web và tải từng ảnh về đổi tên</td>
+          </tr>
+          <tr>
+            <td><strong>Media Buyer / Marketer</strong></td>
+            <td>Tiếp nhận ảnh thành phẩm triển khai chạy quảng cáo đa kênh</td>
+            <td>Nhận ảnh đúng kích thước (1:1, 9:16, 16:9), đúng hạn chiến dịch</td>
+            <td>Nhận ảnh sai tỉ lệ, vi phạm khoảng thở UI của TikTok/Reels</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 3 -->
+    <section id="sec3">
+      <h2>3. Scope & Phasing (P0 / P1 / P2)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>P0: MVP Core (Bắt buộc chạy ngay)</th>
+            <th>P1: Fast Follow (Tối ưu chuyên sâu)</th>
+            <th>P2: Future & Growth (Điện ảnh hóa)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              • Tiếp nhận brief & 3 slot ảnh mẫu<br>
+              • Bóc tách Scene Stacks Prompt điện ảnh<br>
+              • Trạm dừng duyệt kịch bản (Human Checkpoint)<br>
+              • Điều khiển browser GPT tạo ảnh tuần tự<br>
+              • Lưu ảnh tự động vào <code>outputs/anh_da_tao/</code><br>
+              • Xuất bản Storyboard Dashboard HTML
+            </td>
+            <td>
+              • Tự động nâng nét AI 4K / 8K<br>
+              • Tách 4 lớp file PSD bằng AI (SAM)<br>
+              • Tự động Outpainting mở rộng khung hình<br>
+              • Feedback Loop tự học hỏi nghiệp vụ
+            </td>
+            <td>
+              • Tự động sinh video chuyển động AI (Google Veo 3 / Sora)<br>
+              • Tự động đăng tải chiến dịch lên Facebook Ads & TikTok Ads Manager
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 4 -->
+    <section id="sec4">
+      <h2>4. High-Level Architecture & Use Case Diagram</h2>
+      <p>Sơ đồ ca sử dụng tổng quan mô tả ranh giới hệ thống, các tác nhân (Actors) và mối quan hệ nghiệp vụ phân cấp:</p>
+      <div class="diagram-card">
+        <img src="assets/usecase-diagram.svg" alt="Use Case Diagram">
+        <div class="diagram-caption">Hình 4.1: Sơ đồ Use Case tổng quan phân hệ Wintop AI Design Autopilot</div>
+      </div>
+    </section>
+
+    <!-- Section 5 -->
+    <section id="sec5">
+      <h2>5. Functional Specifications & User Flows</h2>
+      <h3>5.1. Sơ đồ Hoạt Động Phân Làn (Activity Swimlane)</h3>
+      <div class="diagram-card">
+        <img src="assets/activity-swimlane.svg" alt="Activity Swimlane Diagram">
+        <div class="diagram-caption">Hình 5.1: Sơ đồ phân làn trách nhiệm giữa Designer, Creative Director, Antigravity và GPT</div>
+      </div>
+
+      <h3>5.2. Sơ đồ Tuần Tự (Sequence Diagram)</h3>
+      <div class="diagram-card">
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Designer as Visual Designer
+    actor CD as Creative Director
+    participant IDE as Antigravity Engine
+    participant Chrome as Chrome Browser (Port 9222)
+    participant GPT as ChatGPT (DALL-E 3)
+    participant FS as Local File System
+
+    Designer->>IDE: Nạp kịch bản (.docx) + 3 ảnh mẫu
+    IDE->>IDE: Bóc tách danh sách Scene Stacks
+    IDE->>CD: [Human Checkpoint] Trình chiếu bảng phân cảnh
+    alt Cần sửa đổi
+        CD-->>Designer: Yêu cầu sửa đổi prompt / đổi góc máy
+        Designer->>IDE: Cập nhật thông số cảnh
+    else Đã duyệt
+        CD->>IDE: Phê duyệt kịch bản (Approved)
+    end
+    
+    loop Xử lý tuần tự từng phân cảnh (1 đến N)
+        IDE->>Chrome: Gửi prompt Scene qua kết nối CDP
+        Chrome->>GPT: Nhập prompt vào ô chat & bấm Send
+        GPT-->>GPT: Tiến hành render ảnh (<= 90s)
+        GPT-->>Chrome: Hiển thị ảnh thành phẩm trên web
+        Chrome-->>IDE: Phát hiện thẻ img chứa URL ảnh gốc
+        IDE->>FS: Tải ảnh gốc & lưu file: scene_XX_slug.png
+        IDE->>FS: Cập nhật scenes_manifest.json
+    end
+
+    IDE->>FS: Tạo trang Storyboard Dashboard HTML
+    IDE-->>Designer: Thông báo hoàn tất 100% kèm link Dashboard
+        </div>
+        <div class="diagram-caption">Hình 5.2: Sơ đồ tương tác tuần tự giữa các hệ thống trong quá trình sinh và tải ảnh</div>
+      </div>
+    </section>
+
+    <!-- Section 6 -->
+    <section id="sec6">
+      <h2>6. Data Model & Entity Relationships</h2>
+      <div class="diagram-card">
+        <div class="mermaid">
+erDiagram
+    CAMPAIGN ||--o{ SCENE : contains
+    CAMPAIGN ||--|{ ASSET_REFERENCE : utilizes
+    SCENE ||--o| GENERATED_IMAGE : produces
+    SCENE ||--o| AUDIT_REPORT : evaluated_by
+    GENERATED_IMAGE ||--o{ EXPORT_FORMAT : formatted_into
+
+    CAMPAIGN {
+        string campaign_id PK
+        string title
+        string brand_line
+        string status
+        datetime created_at
+    }
+
+    ASSET_REFERENCE {
+        string asset_id PK
+        string campaign_id FK
+        string slot_type
+        string file_path
+        string checksum
+    }
+
+    SCENE {
+        int scene_id PK
+        string campaign_id FK
+        string scene_title
+        string prompt_en
+        string safe_zone
+        string aspect_ratio
+        string review_status
+    }
+
+    GENERATED_IMAGE {
+        string image_id PK
+        int scene_id FK
+        string local_file_path
+        int file_size_bytes
+        string gpt_image_url
+        datetime downloaded_at
+    }
+
+    AUDIT_REPORT {
+        string audit_id PK
+        int scene_id FK
+        boolean safe_zone_passed
+        float face_similarity_score
+        int anatomical_errors
+        string final_verdict
+    }
+
+    EXPORT_FORMAT {
+        string export_id PK
+        string image_id FK
+        string ratio_name
+        string output_path
+    }
+        </div>
+        <div class="diagram-caption">Hình 6.1: Mô hình thực thể quan hệ dữ liệu (ERD)</div>
+      </div>
+    </section>
+
+    <!-- Section 7 -->
+    <section id="sec7">
+      <h2>7. System States & Lifecycle</h2>
+      <div class="diagram-card">
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> DRAFT : Bóc tách từ kịch bản
+    DRAFT --> PENDING_REVIEW : Trình bày bảng phân cảnh
+    
+    state PENDING_REVIEW {
+        [*] --> CheckpointWaiting
+        CheckpointWaiting --> Editing : CD yêu cầu điều chỉnh
+        Editing --> CheckpointWaiting : Designer cập nhật prompt
+    }
+
+    PENDING_REVIEW --> QUEUED : CD bấm Duyệt (Approved)
+    
+    state GENERATING {
+        QUEUED --> BrowserDispatching : Gửi prompt vào Chrome
+        BrowserDispatching --> AwaitingRender : Chờ GPT sinh ảnh (<= 90s)
+        AwaitingRender --> Retrying : Quá 90s / Rate Limit
+        Retrying --> AwaitingRender : Thử lại lần 1
+    }
+
+    GENERATING --> AUDITING : Nhận ảnh thành công
+    Retrying --> FAILED : Vượt quá số lần thử
+
+    state AUDITING {
+        [*] --> SafeZoneCheck
+        SafeZoneCheck --> FaceCheck
+        FaceCheck --> QualityCheck
+    }
+
+    AUDITING --> PASSED : Đạt 100% tiêu chuẩn
+    AUDITING --> NEEDS_RETOUCH : Phát hiện lỗi chi tiết
+
+    PASSED --> PACKAGED : Lưu outputs/ & cập nhật Manifest
+    NEEDS_RETOUCH --> PACKAGED : Ghi chú cảnh báo trong Dashboard
+    FAILED --> PACKAGED : Đánh dấu Pending Retry
+
+    PACKAGED --> [*] : Xuất Dashboard hoàn tất
+        </div>
+        <div class="diagram-caption">Hình 7.1: Sơ đồ chuyển đổi trạng thái của phân cảnh (State Machine)</div>
+      </div>
+    </section>
+
+    <!-- Section 8 -->
+    <section id="sec8">
+      <h2>8. Edge Cases, Transaction Integrity & Limits</h2>
+      <h3>8.1. Ma trận Xử lý Giao dịch Gián đoạn</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Tình huống Rủi ro</th>
+            <th>Dữ liệu còn lại trên máy</th>
+            <th>Cơ chế Khôi phục (Resume)</th>
+            <th>Cơ chế Dọn dẹp (Cleanup)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Đóng trình duyệt giữa chừng</td>
+            <td>Các file ảnh đã tải trong <code>outputs/anh_da_tao/</code></td>
+            <td>Đọc <code>scenes_manifest.json</code>, tự động chạy tiếp từ cảnh dang dở</td>
+            <td>Xóa file tải lỗi 0 bytes nếu có</td>
+          </tr>
+          <tr>
+            <td>Chạm hạn mức tin nhắn GPT</td>
+            <td>Toàn bộ ảnh trước đó được lưu an toàn</td>
+            <td>Dừng hàng đợi an toàn, tạo lệnh tiếp tục riêng</td>
+            <td>Bảo toàn trạng thái manifest</td>
+          </tr>
+          <tr>
+            <td>Rớt gói tin khi tải file ảnh</td>
+            <td>File ảnh tải dở chưa trọn vẹn</td>
+            <td>Thử tải lại URL ảnh tối đa 3 lần cách nhau 5s</td>
+            <td>Hủy file tải hỏng trước khi ghi đè bản mới</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>8.2. Định Mức Số Liệu & Mẫu Câu Chữ</h3>
+      <ul>
+        <li><strong>Timeout</strong>: Tối đa <strong>90 giây / ảnh</strong>. Thử lại tối đa <strong>1 lần</strong>.</li>
+        <li><strong>Dung lượng ảnh</strong>: <strong>1.5 MB đến 8.0 MB</strong>. Định dạng tên file: <code>scene_{id:02d}_{slug}.png</code>.</li>
+        <li><strong>Mẫu thông báo thành công</strong>: <em>"🎉 CHÚC MỪNG! Đã hoàn tất tạo và lưu trữ [N]/[N] phân cảnh thành công tại outputs/anh_da_tao/! Bảng Storyboard Dashboard đã sẵn sàng."</em></li>
+      </ul>
+    </section>
+
+    <!-- Section 9 -->
+    <section id="sec9">
+      <h2>9. Security, Brand Safety & Quality Audit</h2>
+      <ul>
+        <li><strong>Bảng màu nhận diện</strong>: Sắc Xanh dương chủ đạo <code>#00529B</code>, Vàng kim <code>#F5A623</code>, Nền Canvas <code>#121621</code>.</li>
+        <li><strong>Quy tắc Safe Zone 1/3</strong>: Lon sữa Wintop và Mascot bắt buộc đặt ở 1/3 góc phải hoặc góc dưới, không che mặt nhân vật.</li>
+        <li><strong>Đồng bộ ánh sáng (Rim Light & Shadow)</strong>: Có bóng tiếp xúc (Contact shadow) trên mặt phẳng và ánh sáng ven (Rim light) tương thích với bối cảnh phòng trọ/đêm trăng rằm.</li>
+        <li><strong>Kiểm soát giải phẫu bàn tay (5 ngón)</strong>: Không để phát sinh các lỗi dị tật ngón tay hoặc dính ngón của AI.</li>
+      </ul>
+    </section>
+
+    <!-- Section 10 -->
+    <section id="sec10">
+      <h2>10. Success Metrics (KPIs) & Roadmap</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Chỉ số Đo lường</th>
+            <th>Hiện trạng (Thủ công)</th>
+            <th>Mục tiêu (Hệ thống Tự động)</th>
+            <th>Đơn vị</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Thời gian sản xuất 1 Key Visual</strong></td>
+            <td>240 phút (4 tiếng)</td>
+            <td><strong>&lt; 1 phút (30s - 60s)</strong></td>
+            <td>Phút / ảnh</td>
+          </tr>
+          <tr>
+            <td><strong>Độ tuân thủ Safe Zone 1/3</strong></td>
+            <td>~ 75%</td>
+            <td><strong>100%</strong></td>
+            <td>Tỷ lệ phần trăm</td>
+          </tr>
+          <tr>
+            <td><strong>Tính nhất quán khuôn mặt (Face ID)</strong></td>
+            <td>~ 60%</td>
+            <td><strong>&gt;= 95%</strong></td>
+            <td>Điểm Similarity</td>
+          </tr>
+          <tr>
+            <td><strong>Thời gian duyệt Storyboard</strong></td>
+            <td>120 phút (cắt dán slide)</td>
+            <td><strong>&lt; 30 giây</strong> (Dashboard tự động)</td>
+            <td>Phút / chiến dịch</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 11 -->
+    <section id="sec11">
+      <h2>11. Tài Liệu Tham Khảo</h2>
+      <ul>
+        <li>Bản đặc tả Brainstorm: <a href="../../../BRAINSTORM_SPEC_WINTOP_DESIGN_AUTOPILOT.md">BRAINSTORM_SPEC_WINTOP_DESIGN_AUTOPILOT.md</a></li>
+        <li>Bộ quy chuẩn thương hiệu: <a href="../../../.agents/skills/wintop-design-autopilot/references/brand_rules.json">brand_rules.json</a></li>
+        <li>Kịch bản thực nghiệm Trung Thu V3: <a href="../../../Kich ban Trung Thu Wintop V3 mien Bac.xlsx">Kich ban Trung Thu Wintop V3 mien Bac.xlsx</a></li>
+        <li>Userscript điều phối Google Flow: <a href="../../../wintop_google_flow_autopilot.js">wintop_google_flow_autopilot.js</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

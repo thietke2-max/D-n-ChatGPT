@@ -1,0 +1,39 @@
+{
+  "campaignTitle": "Kịch bản Trung Thu Wintop V3 Miền Bắc",
+  "brand": "WINTOP COLOSTRUM GAIN",
+  "createdAt": "19/09/2026 11:30",
+  "stats": {
+    "totalScenes": 3,
+    "renderedCount": 3,
+    "safeZoneScore": "100%"
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "title": "Scene 01: Tan ca muộn đêm rằm",
+      "char": "Mẹ công nhân (Mẫu)",
+      "prompt": "Cinematic shot of a tired Vietnamese female factory worker in work clothes, walking her motorbike out of a quiet factory gate at night, soft street lights, melancholic atmosphere, highly detailed, realistic, 4k.",
+      "safe_zone": "Center",
+      "ratio": "16:9",
+      "imageUrl": "ket_qua_test_scene_01.png"
+    },
+    {
+      "id": 2,
+      "title": "Scene 02: Dừng trước hàng đèn Trung thu",
+      "char": "Mẹ công nhân",
+      "prompt": "Close-up portrait of a 30-year-old Vietnamese mother looking tenderly at glowing red and yellow star lanterns in a street stall, longing eyes full of love for her daughter, warm nostalgic lighting, 35mm f/1.8 lens.",
+      "safe_zone": "Center-Left",
+      "ratio": "16:9",
+      "imageUrl": "ket_qua_test_chinh_xac_scene_01.png"
+    },
+    {
+      "id": 3,
+      "title": "Scene 03: Phòng trọ vắng & Chiếc bánh để phần",
+      "char": "Mẹ công nhân",
+      "prompt": "Medium shot in a modest Vietnamese rental room, a mother picking vegetables at a small table, a can of Wintop Colostrum Gain on the table, warm tungsten lamp, emotional quiet atmosphere.",
+      "safe_zone": "Right-Third (Safe Zone for Wintop Can)",
+      "ratio": "1:1",
+      "imageUrl": "ket_qua_test_scene_stack.png"
+    }
+  ]
+}

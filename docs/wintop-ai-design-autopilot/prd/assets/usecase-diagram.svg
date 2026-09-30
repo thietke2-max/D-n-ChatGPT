@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .title { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 700; fill: #00529B; }
+      .subtitle { font-family: 'Inter', sans-serif; font-size: 13px; fill: #64748B; }
+      .boundary { fill: #F8FAFC; stroke: #CBD5E1; stroke-width: 2; stroke-dasharray: 6 4; rx: 16; }
+      .actor-box { fill: #0F172A; rx: 8; }
+      .actor-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; fill: #FFFFFF; text-anchor: middle; }
+      .usecase-ellipse { fill: #FFFFFF; stroke: #00529B; stroke-width: 2; }
+      .usecase-text { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; fill: #1E293B; text-anchor: middle; }
+      .usecase-sub { font-family: 'Inter', sans-serif; font-size: 10px; fill: #64748B; text-anchor: middle; }
+      .line { stroke: #64748B; stroke-width: 1.5; }
+      .include-line { stroke: #F5A623; stroke-width: 1.5; stroke-dasharray: 4 3; }
+      .include-text { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; fill: #D97706; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="960" height="620" fill="#FFFFFF" rx="12"/>
+
+  <!-- Title Header -->
+  <text x="40" y="45" class="title">WINTOP AI DESIGN AUTOPILOT — USE CASE ARCHITECTURE</text>
+  <text x="40" y="68" class="subtitle">Mô hình phân rã ca sử dụng hệ thống tự động hóa quy trình thiết kế và kết nối GPT</text>
+
+  <!-- System Boundary -->
+  <rect x="230" y="95" width="500" height="495" class="boundary"/>
+  <text x="250" y="125" font-family="Inter" font-size="14" font-weight="700" fill="#00529B">HỆ THỐNG WINTOP AI AUTOPILOT ENGINE</text>
+
+  <!-- Actors Left: Creative Director & Visual Designer -->
+  <!-- Creative Director -->
+  <circle cx="90" cy="190" r="20" fill="#00529B"/>
+  <rect x="30" y="220" width="120" height="30" class="actor-box"/>
+  <text x="90" y="240" class="actor-text">Creative Director</text>
+
+  <!-- Visual Designer -->
+  <circle cx="90" cy="380" r="20" fill="#00529B"/>
+  <rect x="30" y="410" width="120" height="30" class="actor-box"/>
+  <text x="90" y="430" class="actor-text">Visual Designer</text>
+
+  <!-- Actors Right: Media Buyer & GPT Engine -->
+  <!-- Media Buyer -->
+  <circle cx="860" cy="220" r="20" fill="#F5A623"/>
+  <rect x="800" y="250" width="120" height="30" class="actor-box" fill="#1E293B"/>
+  <text x="860" y="270" class="actor-text">Media Buyer</text>
+
+  <!-- OpenAI / GPT Engine -->
+  <rect x="800" y="400" width="120" height="50" rx="8" fill="#10B981"/>
+  <text x="860" y="425" class="actor-text">OpenAI GPT</text>
+  <text x="860" y="440" font-family="Inter" font-size="11" fill="#E2E8F0" text-anchor: middle;>DALL-E 3 API / Web</text>
+
+  <!-- Use Cases Inside Boundary -->
+  <!-- UC1: Ingest Assets & Brief -->
+  <ellipse cx="480" cy="155" rx="140" ry="26" class="usecase-ellipse"/>
+  <text x="480" y="152" class="usecase-text">UC-01: Tiếp nhận Brief & 3 Slot Assets</text>
+  <text x="480" y="166" class="usecase-sub">(Ảnh mẫu, Lon Wintop, Mascot Hươu)</text>
+
+  <!-- UC2: Parse Script to Scene Stacks -->
+  <ellipse cx="480" cy="225" rx="140" ry="26" class="usecase-ellipse"/>
+  <text x="480" y="222" class="usecase-text">UC-02: Bóc tách Kịch bản Scene Stacks</text>
+  <text x="480" y="236" class="usecase-sub">(Cinematic Prompt, Safe Zone 1/3)</text>
+
+  <!-- UC3: Human Checkpoint Review -->
+  <ellipse cx="480" cy="295" rx="140" ry="26" class="usecase-ellipse" stroke="#D97706" stroke-width="2.5"/>
+  <text x="480" y="292" class="usecase-text" fill="#D97706">UC-03: Phê duyệt Kịch bản (Human Gate)</text>
+  <text x="480" y="306" class="usecase-sub">(Dừng duyệt & Chỉnh sửa prompt)</text>
+
+  <!-- UC4: Generate Images via GPT -->
+  <ellipse cx="480" cy="365" rx="140" ry="26" class="usecase-ellipse"/>
+  <text x="480" y="362" class="usecase-text">UC-04: Điều khiển Trình duyệt & GPT</text>
+  <text x="480" y="376" class="usecase-sub">(Gửi prompt & lắng nghe sinh ảnh)</text>
+
+  <!-- UC5: Download & Organize Outputs -->
+  <ellipse cx="480" cy="435" rx="140" ry="26" class="usecase-ellipse"/>
+  <text x="480" y="432" class="usecase-text">UC-05: Tải & Lưu Trữ Ảnh Tự Động</text>
+  <text x="480" y="446" class="usecase-sub">(Lưu outputs/anh_da_tao/ + Manifest)</text>
+
+  <!-- UC6: Storyboard Dashboard & Audit -->
+  <ellipse cx="480" cy="505" rx="140" ry="26" class="usecase-ellipse"/>
+  <text x="480" y="502" class="usecase-text">UC-06: Xuất Bản Storyboard Dashboard</text>
+  <text x="480" y="516" class="usecase-sub">(HTML tương tác, audit Safe Zone)</text>
+
+  <!-- UC7: Feedback Loop & Self Upgrade -->
+  <ellipse cx="480" cy="565" rx="130" ry="20" class="usecase-ellipse" stroke="#10B981"/>
+  <text x="480" y="570" class="usecase-text" fill="#047857">UC-07: Tự Nâng Cấp Tri Thức (Feedback Loop)</text>
+
+  <!-- Associations Lines -->
+  <!-- Creative Director to UC3, UC6 -->
+  <line x1="150" y1="230" x2="345" y2="295" class="line"/>
+  <line x1="150" y1="240" x2="350" y2="500" class="line"/>
+
+  <!-- Visual Designer to UC1, UC2, UC4, UC5, UC7 -->
+  <line x1="150" y1="415" x2="345" y2="165" class="line"/>
+  <line x1="150" y1="420" x2="345" y2="230" class="line"/>
+  <line x1="150" y1="425" x2="340" y2="365" class="line"/>
+  <line x1="150" y1="430" x2="340" y2="435" class="line"/>
+  <line x1="150" y1="435" x2="350" y2="565" class="line"/>
+
+  <!-- Media Buyer to UC6 -->
+  <line x1="800" y1="265" x2="620" y2="505" class="line"/>
+
+  <!-- GPT Engine to UC4 -->
+  <line x1="800" y1="415" x2="620" y2="370" class="line" stroke="#10B981" stroke-width="2"/>
+
+  <!-- Include relationship: UC4 includes UC5 -->
+  <line x1="480" y1="391" x2="480" y2="409" class="include-line"/>
+  <text x="525" y="403" class="include-text">&lt;&lt;include&gt;&gt;</text>
+</svg>
